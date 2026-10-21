@@ -48,7 +48,7 @@ try {
     $env = getenv();
     $env['REWEAR_DB_HOST'] = $host; $env['REWEAR_DB_PORT'] = $port;
     $env['REWEAR_DB_USER'] = $user; $env['REWEAR_DB_PASS'] = $password;
-    $env['REWEAR_DB_NAME'] = $db; $env['REWEAR_MODE_DEV'] = '1';
+    $env['REWEAR_DB_NAME'] = $db; $env['REWEAR_MODE_DEV'] = '0'; $env['REWEAR_SITE_URL'] = $baseUrl;
     $server = proc_open([PHP_BINARY, '-S', $address, '-t', $root], [['pipe', 'r'], ['file', $log, 'a'], ['file', $log, 'a']], $pipes, $root, $env);
     if (!is_resource($server)) throw new RuntimeException('Serveur de test indisponible');
     fclose($pipes[0]);
@@ -62,6 +62,7 @@ try {
     preg_match('/name="csrf" value="([^"]+)"/', $login, $m); $csrf = $m[1];
     verifier(requete('/login.php', ['csrf' => $csrf, 'email' => 'admin@rewear.mu', 'mot_de_passe' => $testPassword])[0] === 302, 'Connexion administrateur');
     [, $list] = requete('/admin/produits.php');
+    preg_match('/name="csrf" value="([^"]+)"/', $list, $m); $csrf = $m[1];
     verifier(str_contains($list, 'Ajouter un vêtement') && str_contains($list, 'Ajouter un livre'), 'Deux boutons de création');
     verifier(requete('/admin/produits.php?voir=999999')[0] === 404, 'Fiche inconnue : 404');
     $initial = (int)$pdo->query('SELECT COUNT(*) FROM produits')->fetchColumn();
