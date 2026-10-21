@@ -4,3 +4,4 @@ uploads/*
 .idea/
 Thumbs.db
 .DS_Store
+.mysql-test-data/

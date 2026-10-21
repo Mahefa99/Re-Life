@@ -1,16 +1,45 @@
 <?php
 // panier.php : voir, modifier et vider le panier
 require_once __DIR__ . '/includes/functions.php';
-exiger_connexion();
+exiger_utilisateur();
+
+$anglais = langue() === 'en';
+
+if (!isset($_SESSION['panier']) || !is_array($_SESSION['panier'])) {
+    $_SESSION['panier'] = [];
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verifier();
     $action = $_POST['action'] ?? '';
     $pid = (int)($_POST['id'] ?? 0);
+
     if ($action === 'maj') {
         $qte = (int)($_POST['quantite'] ?? 0);
-        if ($qte <= 0) unset($_SESSION['panier'][$pid]);
-        else $_SESSION['panier'][$pid] = $qte;
+        if ($pid < 1 || $qte <= 0) {
+            unset($_SESSION['panier'][$pid]);
+        } else {
+            // Le stock peut avoir changé depuis l'affichage du panier : la session est
+            // toujours ramenée à la quantité réellement disponible.
+            $stmtProduit = $pdo->prepare('SELECT nom, stock, actif FROM produits WHERE id = ?');
+            $stmtProduit->execute([$pid]);
+            $produit = $stmtProduit->fetch();
+
+            if (!$produit || !(int)$produit['actif'] || (int)$produit['stock'] < 1) {
+                unset($_SESSION['panier'][$pid]);
+                flash('error', $anglais
+                    ? 'This product is no longer available and has been removed from your cart.'
+                    : 'Ce produit n’est plus disponible et a été retiré de votre panier.');
+            } else {
+                $qteNormalisee = min($qte, (int)$produit['stock']);
+                $_SESSION['panier'][$pid] = $qteNormalisee;
+                if ($qteNormalisee < $qte) {
+                    flash('info', $anglais
+                        ? sprintf('The quantity of “%s” was adjusted to the available stock (%d).', $produit['nom'], $qteNormalisee)
+                        : sprintf('La quantité de « %s » a été ajustée au stock disponible (%d).', $produit['nom'], $qteNormalisee));
+                }
+            }
+        }
     } elseif ($action === 'retirer') {
         unset($_SESSION['panier'][$pid]);
     } elseif ($action === 'vider') {
@@ -19,27 +48,83 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect('panier.php');
 }
 
-// Charger les produits du panier depuis la base
+// Charger tous les produits référencés par la session, y compris les produits
+// désactivés, afin de pouvoir prévenir l'utilisateur avant de les retirer.
 $lignes = [];
-$total = 0;
-if (panier()) {
-    $ids = array_keys(panier());
-    $in  = implode(',', array_fill(0, count($ids), '?'));
-    $stmt = $pdo->prepare("SELECT * FROM produits WHERE id IN ($in) AND actif = 1");
-    $stmt->execute($ids);
-    foreach ($stmt->fetchAll() as $p) {
-        $qte = min((int)panier()[$p['id']], (int)$p['stock']);
-        if ($qte < 1) continue;
-        $sous = $qte * $p['prix'];
-        $total += $sous;
-        $lignes[] = ['p' => $p, 'qte' => $qte, 'sous' => $sous];
+$avertissements = [];
+$total = 0.0;
+$panierSession = $_SESSION['panier'];
+$ids = [];
+
+foreach ($panierSession as $idSession => $qteSession) {
+    $pid = (int)$idSession;
+    if ($pid > 0 && (int)$qteSession > 0) {
+        $ids[$pid] = $pid;
+    } else {
+        unset($_SESSION['panier'][$idSession]);
     }
+}
+
+$produitsParId = [];
+if ($ids) {
+    $in = implode(',', array_fill(0, count($ids), '?'));
+    $stmt = $pdo->prepare("SELECT * FROM produits WHERE id IN ($in)");
+    $stmt->execute(array_values($ids));
+    foreach ($stmt->fetchAll() as $produit) {
+        $produitsParId[(int)$produit['id']] = $produit;
+    }
+}
+
+foreach ($panierSession as $idSession => $qteSession) {
+    $pid = (int)$idSession;
+    $qteDemandee = (int)$qteSession;
+    if ($pid < 1 || $qteDemandee < 1) {
+        continue;
+    }
+
+    $p = $produitsParId[$pid] ?? null;
+    if (!$p) {
+        unset($_SESSION['panier'][$idSession]);
+        $avertissements[] = $anglais
+            ? 'A product that no longer exists was removed from your cart.'
+            : 'Un produit qui n’existe plus a été retiré de votre panier.';
+        continue;
+    }
+
+    if (!(int)$p['actif'] || (int)$p['stock'] < 1) {
+        unset($_SESSION['panier'][$idSession]);
+        $avertissements[] = $anglais
+            ? sprintf('“%s” is no longer available and was removed from your cart.', $p['nom'])
+            : sprintf('« %s » n’est plus disponible et a été retiré de votre panier.', $p['nom']);
+        continue;
+    }
+
+    $qte = min($qteDemandee, (int)$p['stock']);
+    $_SESSION['panier'][$pid] = $qte;
+    if ($qte < $qteDemandee) {
+        $avertissements[] = $anglais
+            ? sprintf('The quantity of “%s” was adjusted to the available stock (%d).', $p['nom'], $qte)
+            : sprintf('La quantité de « %s » a été ajustée au stock disponible (%d).', $p['nom'], $qte);
+    }
+
+    $sous = $qte * (float)$p['prix'];
+    $total += $sous;
+    $lignes[] = ['p' => $p, 'qte' => $qte, 'sous' => $sous];
 }
 
 $titre = t('cart_title');
 require __DIR__ . '/includes/header.php';
 ?>
 <h1><?= t('cart_title') ?></h1>
+
+<?php if ($avertissements): ?>
+  <div class="alert alert-info" role="status">
+    <?php foreach (array_unique($avertissements) as $avertissement): ?>
+      <div><?= e($avertissement) ?></div>
+    <?php endforeach; ?>
+  </div>
+<?php endif; ?>
+
 <?php if (!$lignes): ?>
   <p><?= t('cart_empty') ?> <a href="catalogue.php"><?= t('discover_shop') ?></a></p>
 <?php else: ?>
@@ -47,7 +132,15 @@ require __DIR__ . '/includes/header.php';
   <tr><th><?= t('th_product') ?></th><th><?= t('th_price') ?></th><th><?= t('th_qty') ?></th><th><?= t('th_subtotal') ?></th><th></th></tr>
   <?php foreach ($lignes as $l): ?>
   <tr>
-    <td><a href="produit.php?id=<?= (int)$l['p']['id'] ?>"><?= e($l['p']['nom']) ?></a></td>
+    <td>
+      <a href="produit.php?id=<?= (int)$l['p']['id'] ?>"><?= e($l['p']['nom']) ?></a>
+      <?php if (($l['p']['categorie'] ?? '') === 'Livres'): ?>
+        <small class="muted" style="display:block">
+          <?= !empty($l['p']['auteur']) ? e(t('by_author') . ' ' . $l['p']['auteur']) : e(t('book_author_unknown')) ?>
+          <?php if (!empty($l['p']['taille'])): ?> · <?= e(t('book_format')) ?> : <?= e($l['p']['taille']) ?><?php endif; ?>
+        </small>
+      <?php endif; ?>
+    </td>
     <td><?= prix($l['p']['prix']) ?></td>
     <td>
       <form method="post">

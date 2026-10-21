@@ -10,7 +10,10 @@ $categories = ['Homme', 'Femme', 'Enfant', 'Chaussures', 'Accessoires', 'Livres'
 
 $sql = 'SELECT * FROM produits WHERE actif = 1 AND stock > 0';
 $params = [];
-if ($q !== '')                         { $sql .= ' AND (nom LIKE ? OR description LIKE ?)'; $params[] = "%$q%"; $params[] = "%$q%"; }
+if ($q !== '') {
+    $sql .= ' AND (nom LIKE ? OR description LIKE ? OR auteur LIKE ? OR genre_livre LIKE ? OR isbn LIKE ? OR editeur LIKE ?)';
+    for ($i = 0; $i < 6; $i++) $params[] = "%$q%";
+}
 if (in_array($cat, $categories, true)) { $sql .= ' AND categorie = ?'; $params[] = $cat; }
 $sql .= ' ORDER BY created_at DESC';
 
@@ -37,13 +40,17 @@ $produits = $stmt->fetchAll();
 <?php else: ?>
 <div class="grille">
   <?php foreach ($produits as $p): ?>
-    <a class="carte" href="produit.php?id=<?= (int)$p['id'] ?>" style="color:inherit;text-decoration:none">
-      <div class="photo"><?php if ($p['image']): ?><img src="uploads/<?= e($p['image']) ?>" alt="<?= e($p['nom']) ?>"><?php else: ?>👕<?php endif; ?></div>
+    <a class="carte <?= $p['categorie'] === 'Livres' ? 'carte-livre' : 'carte-vetement' ?>" href="produit.php?id=<?= (int)$p['id'] ?>">
+      <div class="photo"><?php if ($p['image']): ?><img src="uploads/<?= e(basename($p['image'])) ?>" alt="<?= e($p['nom']) ?>"><?php else: ?><span class="product-art <?= e(classe_visuel_produit($p)) ?>" role="img" aria-label="<?= e($p['nom']) ?>"></span><?php endif; ?><span class="favorite-mark" aria-hidden="true"><?= rewear_icon('heart') ?></span></div>
       <div class="corps">
         <h3><?= e($p['nom']) ?></h3>
-        <span><span class="badge"><?= e(t('cat_' . $p['categorie'])) ?></span> <span class="badge badge-gris"><?= e(t('etat_' . $p['etat'])) ?></span></span>
-        <span class="muted"><?= t('size') ?> <?= e($p['taille']) ?></span>
-        <span class="prix"><?= prix($p['prix']) ?></span>
+        <?php if ($p['categorie'] === 'Livres'): ?>
+          <p class="card-author"><?= e($p['auteur'] ?: t('book_author_unknown')) ?></p>
+          <p class="card-book-meta"><?= e(implode(' · ', array_filter([$p['genre_livre'] ?? '', $p['taille'] ?? '']))) ?></p>
+        <?php else: ?>
+          <p class="card-book-meta"><?= e(t('cat_' . $p['categorie'])) ?><?php if ($p['taille']): ?> · <?= t('size') ?> <?= e($p['taille']) ?><?php endif; ?></p>
+        <?php endif; ?>
+        <div class="product-bottom"><span class="prix"><?= prix($p['prix']) ?></span><span class="reuse-mark" aria-hidden="true"><?= rewear_icon($p['categorie'] === 'Livres' ? 'book' : 'leaf') ?></span></div>
       </div>
     </a>
   <?php endforeach; ?>
