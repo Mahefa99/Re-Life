@@ -1,6 +1,9 @@
 <?php
 // Textes en français. Pour ajouter un texte : une nouvelle ligne ici ET la même clé dans en.php
 return [
+    'auth_rate_limited' => 'Trop de tentatives. Veuillez patienter avant de réessayer.',
+    'auth_reconnect' => 'Vos informations de connexion ont changé. Veuillez vous reconnecter.',
+    'auth_email_password' => 'Mot de passe actuel (obligatoire pour changer l’e-mail)',
     // Menu / général
     'menu_shop' => 'Boutique', 'menu_donate' => 'Faire un don', 'menu_admin' => 'Administration', 'menu_missions' => 'Mes missions',
     'cart' => 'Panier', 'login' => 'Connexion', 'register' => 'Créer un compte', 'logout' => 'Déconnexion',
@@ -93,7 +96,7 @@ return [
     'account_title' => 'Mon compte', 'account_intro' => 'Gérez vos informations et retrouvez toute votre activité ReWear.',
     'personal_info' => 'Mes informations', 'personal_info_help' => 'Ces coordonnées servent à vos collectes et à vos livraisons.',
     'save_profile' => 'Enregistrer mes informations', 'profile_saved' => 'Vos informations ont été mises à jour.',
-    'security' => 'Sécurité', 'security_help' => 'Utilisez un mot de passe unique d’au moins 8 caractères.',
+    'security' => 'Sécurité', 'security_help' => 'Utilisez un mot de passe unique d’au moins 12 caractères.',
     'current_password' => 'Mot de passe actuel', 'change_password' => 'Modifier mon mot de passe',
     'err_current_pwd' => 'Le mot de passe actuel est incorrect.', 'password_updated' => 'Votre mot de passe a été modifié.',
     'err_name_long' => 'Le nom ne peut pas dépasser 100 caractères.', 'err_email_long' => "L'e-mail ne peut pas dépasser 150 caractères.",
@@ -104,9 +107,9 @@ return [
 
     // Inscription / connexion
     'register_title' => 'Créer un compte', 'register_sub' => 'Un seul compte pour donner et pour acheter.',
-    'pwd_min' => 'Mot de passe (8 caractères minimum)', 'confirm_pwd' => 'Confirmer le mot de passe', 'create_my_account' => 'Créer mon compte',
+    'pwd_min' => 'Mot de passe (12 caractères minimum)', 'confirm_pwd' => 'Confirmer le mot de passe', 'create_my_account' => 'Créer mon compte',
     'already' => 'Déjà inscrit ?', 'login_link' => 'Se connecter',
-    'err_name' => 'Le nom est obligatoire.', 'err_email' => 'Adresse e-mail invalide.', 'err_pwd_len' => 'Le mot de passe doit contenir au moins 8 caractères.',
+    'err_name' => 'Le nom est obligatoire.', 'err_email' => 'Adresse e-mail invalide.', 'err_pwd_len' => 'Utilisez au moins 12 caractères et au maximum 72 octets (les caractères accentués peuvent compter plusieurs octets).',
     'err_pwd_match' => 'Les mots de passe ne correspondent pas.', 'err_email_used' => 'Un compte existe déjà avec cet e-mail.',
     'account_created' => 'Compte créé ! Vous pouvez maintenant vous connecter.',
     'login_title' => 'Connexion', 'no_account' => 'Pas encore de compte ?', 'bad_login' => 'E-mail ou mot de passe incorrect.',
@@ -187,7 +190,7 @@ return [
     'admin_photo_help' => 'Photo (JPG, PNG ou WebP, 3 Mo max)', 'admin_publish' => 'Mettre en ligne',
     'admin_cancel' => 'Annuler', 'admin_all_products' => 'Tous les produits (%d)', 'admin_visible' => 'Visible',
     'admin_yes' => 'Oui', 'admin_no' => 'Non', 'admin_edit' => 'Modifier', 'admin_hide' => 'Masquer', 'admin_show' => 'Afficher',
-    'admin_user_required_fields' => 'Nom, e-mail valide et mot de passe (8 caractères min.) requis.',
+    'admin_user_required_fields' => 'Nom, e-mail valide et mot de passe (12 caractères min.) requis.',
     'admin_account_created' => 'Compte créé.', 'admin_role_updated' => 'Rôle modifié.',
     'admin_account_status_updated' => 'Statut du compte modifié.',
     'admin_self_protected' => "Votre propre rôle et votre propre statut sont protégés sur cette page.",
@@ -195,7 +198,7 @@ return [
     'admin_keep_one_active' => 'Au moins un administrateur actif doit rester.',
     'admin_create_account_title' => "Ajouter un membre de l'équipe",
     'admin_team_access_help' => "Les clients créent eux-mêmes leur compte. Vous pouvez ajouter plusieurs livreurs et administrateurs ; un administrateur a accès à toute l'administration.",
-    'admin_temp_password' => 'Mot de passe temporaire (8 caractères min.)', 'admin_role' => 'Rôle',
+    'admin_temp_password' => 'Mot de passe temporaire (12 caractères min.)', 'admin_role' => 'Rôle',
     'admin_create' => 'Créer', 'admin_all_accounts' => 'Tous les comptes (%d)', 'admin_active' => 'Actif',
     'admin_you' => 'vous', 'admin_disable' => 'Désactiver', 'admin_reactivate' => 'Réactiver',
     'role_utilisateur' => 'Utilisateur', 'role_livreur' => 'Livreur', 'role_admin' => 'Administrateur',

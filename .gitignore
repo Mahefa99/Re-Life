@@ -5,3 +5,9 @@ uploads/*
 Thumbs.db
 .DS_Store
 .mysql-test-data/
+
+includes/config.local.php
+.env
+.env.*
+!.env.example
+!uploads/.htaccess

@@ -1,0 +1,14 @@
+Options -Indexes
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule (^|/)\. - [F,L]
+    RewriteRule ^(includes|tests|docs)(/|$) - [F,L,NC]
+</IfModule>
+<FilesMatch "(?i)\.(sql|md|log|ini|toml|ya?ml|bak|dist)$">
+    Require all denied
+</FilesMatch>
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+    Header always set Referrer-Policy "no-referrer"
+</IfModule>

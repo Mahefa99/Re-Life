@@ -2,7 +2,8 @@
 // ============================================================
 // functions.php : fonctions utilitaires partagées par toutes les pages
 // ============================================================
-require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/security.php';
 
 // --- Langue : choisie via ?lang=fr ou ?lang=en, mémorisée en session ---
 if (isset($_GET['lang']) && in_array($_GET['lang'], ['fr', 'en'], true)) {
@@ -104,15 +105,17 @@ function synchroniser_session_utilisateur() {
     $dejaFait = true;
 
     global $pdo;
-    $stmt = $pdo->prepare('SELECT id, nom, email, role, actif FROM users WHERE id = ?');
+    $stmt = $pdo->prepare('SELECT id, nom, email, role, actif, session_version FROM users WHERE id = ?');
     $stmt->execute([(int)$_SESSION['user']['id']]);
     $compte = $stmt->fetch();
 
-    if (!$compte || !(int)$compte['actif']) {
-        unset($_SESSION['user'], $_SESSION['panier']);
+    if (!$compte || !(int)$compte['actif'] || session_expiree($_SESSION, time())
+        || (int)($_SESSION['session_version'] ?? 0) !== (int)$compte['session_version']) {
+        fermer_session_auth();
         return;
     }
 
+    $_SESSION['auth_last_seen'] = time();
     $_SESSION['user'] = [
         'id' => (int)$compte['id'],
         'nom' => $compte['nom'],
@@ -166,7 +169,7 @@ function csrf_field() {
     return '<input type="hidden" name="csrf" value="' . csrf_token() . '">';
 }
 function csrf_verifier() {
-    if (!isset($_POST['csrf']) || !hash_equals($_SESSION['csrf'] ?? '', $_POST['csrf'])) {
+    if (!is_string($_POST['csrf'] ?? null) || empty($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
         http_response_code(400);
         die(e(t('invalid_request')));
     }
@@ -178,24 +181,6 @@ function panier() {
 }
 function panier_compte() {
     return array_sum(panier());
-}
-
-// Enregistrer une image envoyée via un formulaire (retourne le nom du fichier ou null)
-function enregistrer_image($champ) {
-    if (empty($_FILES[$champ]['name']) || $_FILES[$champ]['error'] !== UPLOAD_ERR_OK) {
-        return null;
-    }
-    $autorises = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
-    $type = mime_content_type($_FILES[$champ]['tmp_name']);
-    if (!isset($autorises[$type]) || $_FILES[$champ]['size'] > 3 * 1024 * 1024) {
-        return null;
-    }
-    if (!is_dir(UPLOAD_DIR) && !mkdir(UPLOAD_DIR, 0775, true) && !is_dir(UPLOAD_DIR)) {
-        return null;
-    }
-    $nom = uniqid('p_', true) . '.' . $autorises[$type];
-    move_uploaded_file($_FILES[$champ]['tmp_name'], UPLOAD_DIR . $nom);
-    return $nom;
 }
 
 // Libellé lisible d'un statut (traduit selon la langue)

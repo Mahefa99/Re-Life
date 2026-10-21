@@ -8,15 +8,18 @@ $vals = ['nom' => '', 'email' => '', 'telephone' => '', 'adresse' => ''];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verifier();
-    foreach ($vals as $k => $_) $vals[$k] = trim($_POST[$k] ?? '');
-    $mdp  = $_POST['mot_de_passe'] ?? '';
-    $mdp2 = $_POST['mot_de_passe2'] ?? '';
+    foreach ($vals as $k => $_) $vals[$k] = trim(champ_texte($_POST, $k));
+    $mdp  = champ_texte($_POST, 'mot_de_passe');
+    $mdp2 = champ_texte($_POST, 'mot_de_passe2');
 
     if ($vals['nom'] === '')                                $erreurs[] = t('err_name');
     if (!filter_var($vals['email'], FILTER_VALIDATE_EMAIL)) $erreurs[] = t('err_email');
-    if (strlen($mdp) < 8)                                   $erreurs[] = t('err_pwd_len');
+    if (!mot_de_passe_valide($mdp))                                   $erreurs[] = t('err_pwd_len');
     if ($mdp !== $mdp2)                                     $erreurs[] = t('err_pwd_match');
 
+    if (mb_strlen($vals['nom']) > 100 || mb_strlen($vals['email']) > 150 || mb_strlen($vals['telephone']) > 30 || mb_strlen($vals['adresse']) > 255) $erreurs[] = t('admin_field_too_long');
+    $retry = limiter_auth('register', $vals['email'], 5, 20, 3600);
+    if ($retry) { reponse_limite($retry); $erreurs[] = t('auth_rate_limited'); }
     if (!$erreurs) {
         $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ?');
         $stmt->execute([$vals['email']]);

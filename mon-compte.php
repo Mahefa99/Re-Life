@@ -5,7 +5,7 @@ exiger_utilisateur();
 $uid = (int)user()['id'];
 
 $chargerCompte = static function () use ($pdo, $uid) {
-    $stmt = $pdo->prepare('SELECT nom, email, telephone, adresse, mot_de_passe FROM users WHERE id = ? AND actif = 1');
+    $stmt = $pdo->prepare('SELECT nom, email, telephone, adresse, mot_de_passe, session_version FROM users WHERE id = ? AND actif = 1');
     $stmt->execute([$uid]);
     return $stmt->fetch();
 };
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($action === 'profil') {
         foreach ($valeursProfil as $champ => $_) {
-            $valeursProfil[$champ] = trim($_POST[$champ] ?? '');
+            $valeursProfil[$champ] = trim(champ_texte($_POST, $champ));
         }
 
         if ($valeursProfil['nom'] === '') $erreursProfil[] = t('err_name');
@@ -42,6 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (mb_strlen($valeursProfil['telephone']) > 30) $erreursProfil[] = t('err_phone_long');
         if (mb_strlen($valeursProfil['adresse']) > 255) $erreursProfil[] = t('err_address_long');
 
+        $emailChange = $valeursProfil['email'] !== $compte['email'];
+        if ($emailChange && !password_verify(champ_texte($_POST, 'mot_de_passe_profil'), $compte['mot_de_passe'])) $erreursProfil[] = t('err_current_pwd');
         if (!$erreursProfil) {
             $emailPris = $pdo->prepare('SELECT 1 FROM users WHERE email = ? AND id <> ?');
             $emailPris->execute([$valeursProfil['email'], $uid]);
@@ -50,13 +52,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!$erreursProfil) {
             try {
-                $pdo->prepare('UPDATE users SET nom = ?, email = ?, telephone = ?, adresse = ? WHERE id = ?')
-                    ->execute([$valeursProfil['nom'], $valeursProfil['email'], $valeursProfil['telephone'], $valeursProfil['adresse'], $uid]);
+                $pdo->beginTransaction();
+                $guard = $pdo->prepare('SELECT session_version FROM users WHERE id = ? AND actif = 1 FOR UPDATE');
+                $guard->execute([$uid]);
+                if ((int)$guard->fetchColumn() !== (int)$compte['session_version']) throw new RuntimeException('Session révoquée.');
+                $pdo->prepare('UPDATE users SET nom = ?, email = ?, telephone = ?, adresse = ?, session_version = session_version + ? WHERE id = ? AND session_version = ?')
+                    ->execute([$valeursProfil['nom'], $valeursProfil['email'], $valeursProfil['telephone'], $valeursProfil['adresse'], $emailChange ? 1 : 0, $uid, $compte['session_version']]);
+                if ($emailChange) $pdo->prepare('DELETE FROM password_resets WHERE user_id = ?')->execute([$uid]);
+                $pdo->commit();
+                if ($emailChange) { fermer_session_auth(); flash('success', t('auth_reconnect')); redirect('login.php'); }
                 $_SESSION['user']['nom'] = $valeursProfil['nom'];
                 $_SESSION['user']['email'] = $valeursProfil['email'];
                 flash('success', t('profile_saved'));
                 redirect('mon-compte.php#profil');
-            } catch (PDOException $e) {
+            } catch (Throwable $e) {
+                if ($pdo->inTransaction()) $pdo->rollBack();
                 if ($e->getCode() === '23000') {
                     $erreursProfil[] = t('err_email_used');
                 } else {
@@ -66,24 +76,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     } elseif ($action === 'mot_de_passe') {
-        $motActuel = $_POST['mot_de_passe_actuel'] ?? '';
-        $nouveau = $_POST['nouveau_mot_de_passe'] ?? '';
-        $confirmation = $_POST['confirmation_mot_de_passe'] ?? '';
+        $motActuel = champ_texte($_POST, 'mot_de_passe_actuel');
+        $nouveau = champ_texte($_POST, 'nouveau_mot_de_passe');
+        $confirmation = champ_texte($_POST, 'confirmation_mot_de_passe');
 
         if (!password_verify($motActuel, $compte['mot_de_passe'])) $erreursMdp[] = t('err_current_pwd');
-        if (strlen($nouveau) < 8) $erreursMdp[] = t('err_pwd_len');
+        if (!mot_de_passe_valide($nouveau)) $erreursMdp[] = t('err_pwd_len');
         if ($nouveau !== $confirmation) $erreursMdp[] = t('err_pwd_match');
 
         if (!$erreursMdp) {
             try {
                 $pdo->beginTransaction();
-                $pdo->prepare('UPDATE users SET mot_de_passe = ? WHERE id = ?')
-                    ->execute([password_hash($nouveau, PASSWORD_DEFAULT), $uid]);
+                $majMotDePasse = $pdo->prepare('UPDATE users SET mot_de_passe = ?, session_version = session_version + 1 WHERE id = ? AND session_version = ?');
+                $majMotDePasse->execute([password_hash($nouveau, PASSWORD_DEFAULT), $uid, $compte['session_version']]);
+                if ($majMotDePasse->rowCount() !== 1) throw new RuntimeException('Session révoquée pendant la modification.');
                 $pdo->prepare('DELETE FROM password_resets WHERE user_id = ?')->execute([$uid]);
                 $pdo->commit();
-                session_regenerate_id(true);
+                fermer_session_auth();
                 flash('success', t('password_updated'));
-                redirect('mon-compte.php#securite');
+                redirect('login.php');
             } catch (Throwable $e) {
                 if ($pdo->inTransaction()) $pdo->rollBack();
                 error_log($e->getMessage());
@@ -121,6 +132,8 @@ require __DIR__ . '/includes/header.php';
       <?= csrf_field() ?><input type="hidden" name="action" value="profil">
       <label for="profil-nom"><?= t('full_name') ?></label>
       <input id="profil-nom" type="text" name="nom" value="<?= e($valeursProfil['nom']) ?>" maxlength="100" autocomplete="name" required>
+      <label for="mot-de-passe-profil"><?= t('auth_email_password') ?></label>
+      <input id="mot-de-passe-profil" type="password" name="mot_de_passe_profil" autocomplete="current-password">
       <label for="profil-email"><?= t('email') ?></label>
       <input id="profil-email" type="email" name="email" value="<?= e($valeursProfil['email']) ?>" maxlength="150" autocomplete="email" required>
       <label for="profil-telephone"><?= t('phone') ?></label>
