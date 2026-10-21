@@ -1,32 +1,36 @@
 <?php
-// login.php : connexion
 require_once __DIR__ . '/includes/functions.php';
 if (est_connecte()) redirect('index.php');
-
 $erreur = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verifier();
-    $email = trim($_POST['email'] ?? '');
-    $mdp   = $_POST['mot_de_passe'] ?? '';
-
-    $stmt = $pdo->prepare('SELECT * FROM users WHERE email = ?');
-    $stmt->execute([$email]);
-    $u = $stmt->fetch();
-
-    if ($u && password_verify($mdp, $u['mot_de_passe'])) {
-        if (!$u['actif']) {
-            $erreur = t('disabled');
-        } else {
-            session_regenerate_id(true);   // évite le vol de session
-            $_SESSION['user'] = ['id' => (int)$u['id'], 'nom' => $u['nom'], 'email' => $u['email'], 'role' => $u['role']];
+    $email = mb_substr(trim(champ_texte($_POST, 'email')), 0, 150);
+    $mdp = champ_texte($_POST, 'mot_de_passe');
+    $retry = limiter_auth('login', $email, 10, 50, 900);
+    if ($retry) {
+        reponse_limite($retry);
+        $erreur = t('auth_rate_limited');
+    } else {
+        $stmt = $pdo->prepare('SELECT * FROM users WHERE email = ?');
+        $stmt->execute([$email]); $u = $stmt->fetch();
+        // Même vérification coûteuse pour les comptes absents et existants.
+        $hash = $u['mot_de_passe'] ?? '$2y$10$vwIJLJDAcXtYqC/S9bv24uvbWHMrqLrJdyHDra6pHVKmX.FRpg7Ue';
+        $valide = strlen($mdp) <= 72 && !str_contains($mdp, "\0") && password_verify($mdp, $hash);
+        if ($u && $u['actif'] && $valide) {
+            if (password_needs_rehash($hash, PASSWORD_DEFAULT)) {
+                $pdo->prepare('UPDATE users SET mot_de_passe = ? WHERE id = ? AND mot_de_passe = ?')->execute([password_hash($mdp, PASSWORD_DEFAULT), $u['id'], $hash]);
+            }
+            $pdo->prepare('DELETE FROM auth_throttles WHERE bucket = ?')->execute([cle_limite('login', 'account', mb_strtolower($email, 'UTF-8'))]);
             $retour = $_SESSION['retour'] ?? null;
             unset($_SESSION['retour']);
-            if ($u['role'] === 'admin')   redirect('admin/index.php');
+            ouvrir_session_auth($u);
+            if ($u['role'] === 'admin') redirect('admin/index.php');
             if ($u['role'] === 'livreur') redirect('livreur/index.php');
-            redirect($retour && str_starts_with($retour, '/') && !str_starts_with($retour, '//') ? $retour : 'index.php');
+            redirect(is_string($retour) && str_starts_with($retour, '/') && !str_starts_with($retour, '//')
+                && !str_contains($retour, chr(92)) && !preg_match('/[\x00-\x20]/', $retour) ? $retour : 'index.php');
+        } else {
+            $erreur = t('bad_login');
         }
-    } else {
-        $erreur = t('bad_login');
     }
 }
 

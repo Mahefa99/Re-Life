@@ -1,23 +1,37 @@
 <?php
-// reinitialiser.php : choix du nouveau mot de passe via le lien reçu
 require_once __DIR__ . '/includes/functions.php';
-
-$token = $_GET['token'] ?? $_POST['token'] ?? '';
-$s = $pdo->prepare('SELECT id, user_id FROM password_resets WHERE token_hash = ? AND used = 0 AND expires_at > NOW()');
-$s->execute([hash('sha256', (string)$token)]);
-$reset = $s->fetch();
-
+$token = champ_texte($_GET, 'token') ?: champ_texte($_POST, 'token');
+$tokenHash = hash('sha256', $token);
+$s = $pdo->prepare('SELECT r.id, r.user_id FROM password_resets r JOIN users u ON u.id = r.user_id WHERE r.token_hash = ? AND r.used = 0 AND r.expires_at > NOW() AND u.actif = 1');
+$s->execute([$tokenHash]); $reset = $s->fetch();
 $erreur = '';
 if ($reset && $_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verifier();
-    $mdp = $_POST['mot_de_passe'] ?? '';
-    if (strlen($mdp) < 8)                              $erreur = t('err_pwd_len');
-    elseif ($mdp !== ($_POST['mot_de_passe2'] ?? ''))  $erreur = t('err_pwd_match');
+    $mdp = champ_texte($_POST, 'mot_de_passe');
+    if (!mot_de_passe_valide($mdp)) $erreur = t('err_pwd_len');
+    elseif ($mdp !== champ_texte($_POST, 'mot_de_passe2')) $erreur = t('err_pwd_match');
     else {
-        $pdo->prepare('UPDATE users SET mot_de_passe = ? WHERE id = ?')->execute([password_hash($mdp, PASSWORD_DEFAULT), $reset['user_id']]);
-        $pdo->prepare('UPDATE password_resets SET used = 1 WHERE id = ?')->execute([$reset['id']]);   // lien à usage unique
-        flash('success', t('pwd_changed'));
-        redirect('login.php');
+        $nouveauHash = password_hash($mdp, PASSWORD_DEFAULT);
+        $pdo->beginTransaction();
+        try {
+            $s = $pdo->prepare('SELECT id FROM users WHERE id = ? AND actif = 1 FOR UPDATE');
+            $s->execute([$reset['user_id']]); $account = $s->fetch();
+            $s = $pdo->prepare('SELECT id FROM password_resets WHERE token_hash = ? AND user_id = ? AND used = 0 AND expires_at > NOW() FOR UPDATE');
+            $s->execute([$tokenHash, $reset['user_id']]);
+            if (!$account || !$s->fetch()) {
+                $pdo->rollBack(); $reset = false;
+            } else {
+                $pdo->prepare('UPDATE users SET mot_de_passe = ?, session_version = session_version + 1 WHERE id = ?')->execute([$nouveauHash, $reset['user_id']]);
+                $pdo->prepare('DELETE FROM password_resets WHERE user_id = ?')->execute([$reset['user_id']]);
+                $pdo->commit();
+                fermer_session_auth();
+                flash('success', t('pwd_changed'));
+                redirect('login.php');
+            }
+        } catch (Throwable $exception) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            throw $exception;
+        }
     }
 }
 

@@ -1,32 +1,34 @@
 <?php
-// mot-de-passe-oublie.php : demande d'un lien de réinitialisation
 require_once __DIR__ . '/includes/functions.php';
 if (est_connecte()) redirect('index.php');
-
 $envoye = false;
-$lien = null;
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verifier();
-    $email = trim($_POST['email'] ?? '');
-
-    $s = $pdo->prepare('SELECT id FROM users WHERE email = ? AND actif = 1');
-    $s->execute([$email]);
-    $uid = $s->fetchColumn();
-
-    if ($uid) {
-        $token = bin2hex(random_bytes(32));                          // jeton aléatoire impossible à deviner
-        $pdo->prepare('DELETE FROM password_resets WHERE user_id = ?')->execute([$uid]);
-        // On stocke l'empreinte (hash) du jeton, jamais le jeton lui-même. Valable 1 heure.
-        $pdo->prepare('INSERT INTO password_resets (user_id, token_hash, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 1 HOUR))')
-            ->execute([$uid, hash('sha256', $token)]);
-        $lien = SITE_URL . '/reinitialiser.php?token=' . $token;
-
-        if (!MODE_DEV) {   // en production : envoi par e-mail (le serveur doit être configuré pour mail())
-            mail($email, t('mail_subject'), t('mail_body', $lien));
+    $email = mb_substr(trim(champ_texte($_POST, 'email')), 0, 150);
+    $retry = limiter_auth('reset', $email, 3, 20, 3600);
+    if ($retry) reponse_limite($retry);
+    if (!$retry && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $pdo->beginTransaction();
+        try {
+            $s = $pdo->prepare('SELECT id FROM users WHERE email = ? AND actif = 1 FOR UPDATE');
+            $s->execute([$email]); $uid = $s->fetchColumn();
+            if ($uid) {
+                $token = bin2hex(random_bytes(32));
+                $pdo->prepare('DELETE FROM password_resets WHERE user_id = ?')->execute([$uid]);
+                $pdo->prepare('INSERT INTO password_resets (user_id, token_hash, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 1 HOUR))')->execute([$uid, hash('sha256', $token)]);
+            }
+            $pdo->commit();
+        } catch (Throwable $exception) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            throw $exception;
+        }
+        if ($uid) {
+            $lien = SITE_URL . '/reinitialiser.php?token=' . $token;
+            // Aucun lien affiché ni journalisé, y compris en développement.
+            if (!function_exists('mail') || !@mail($email, t('mail_subject'), t('mail_body', $lien))) error_log('ReWear: envoi de récupération indisponible.');
         }
     }
-    $envoye = true;   // même message que le compte existe ou non (ne révèle rien)
+    $envoye = true;
 }
 
 $titre = t('forgot_title');
@@ -35,9 +37,6 @@ require __DIR__ . '/includes/header.php';
 <h1><?= t('forgot_title') ?></h1>
 <?php if ($envoye): ?>
   <div class="alert alert-success"><?= t('forgot_sent') ?></div>
-  <?php if (MODE_DEV && $lien): ?>
-    <div class="alert alert-info"><?= t('dev_mode') ?> <a href="<?= e($lien) ?>"><?= t('dev_click') ?></a></div>
-  <?php endif; ?>
 <?php else: ?>
   <form class="form" method="post">
     <?= csrf_field() ?>

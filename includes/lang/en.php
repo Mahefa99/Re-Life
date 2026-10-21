@@ -1,6 +1,9 @@
 <?php
 // English texts. Same keys as fr.php. A missing key falls back to French.
 return [
+    'auth_rate_limited' => 'Too many attempts. Please wait before trying again.',
+    'auth_reconnect' => 'Your sign-in details have changed. Please sign in again.',
+    'auth_email_password' => 'Current password (required to change your email)',
     'menu_shop' => 'Shop', 'menu_donate' => 'Donate', 'menu_admin' => 'Administration', 'menu_missions' => 'My missions',
     'cart' => 'Cart', 'login' => 'Log in', 'register' => 'Sign up', 'logout' => 'Log out',
     'footer_text' => 'Give, reuse, recycle. Less waste, more solidarity.',
@@ -87,7 +90,7 @@ return [
     'account_title' => 'My account', 'account_intro' => 'Manage your information and find all your ReWear activity.',
     'personal_info' => 'My information', 'personal_info_help' => 'These details are used for collections and deliveries.',
     'save_profile' => 'Save my information', 'profile_saved' => 'Your information has been updated.',
-    'security' => 'Security', 'security_help' => 'Use a unique password of at least 8 characters.',
+    'security' => 'Security', 'security_help' => 'Use a unique password of at least 12 characters.',
     'current_password' => 'Current password', 'change_password' => 'Change my password',
     'err_current_pwd' => 'The current password is incorrect.', 'password_updated' => 'Your password has been changed.',
     'err_name_long' => 'The name cannot exceed 100 characters.', 'err_email_long' => 'The e-mail cannot exceed 150 characters.',
@@ -97,9 +100,9 @@ return [
     'th_no' => 'No.', 'th_date' => 'Date', 'th_total' => 'Total', 'th_payment' => 'Payment', 'th_status' => 'Status', 'th_desc' => 'Description', 'th_qty_short' => 'Qty',
 
     'register_title' => 'Create an account', 'register_sub' => 'One account to donate and to buy.',
-    'pwd_min' => 'Password (8 characters minimum)', 'confirm_pwd' => 'Confirm password', 'create_my_account' => 'Create my account',
+    'pwd_min' => 'Password (12 characters minimum)', 'confirm_pwd' => 'Confirm password', 'create_my_account' => 'Create my account',
     'already' => 'Already registered?', 'login_link' => 'Log in',
-    'err_name' => 'Name is required.', 'err_email' => 'Invalid e-mail address.', 'err_pwd_len' => 'The password must be at least 8 characters long.',
+    'err_name' => 'Name is required.', 'err_email' => 'Invalid e-mail address.', 'err_pwd_len' => 'Use at least 12 characters and no more than 72 bytes (some characters take more than one byte).',
     'err_pwd_match' => 'Passwords do not match.', 'err_email_used' => 'An account already exists with this e-mail.',
     'account_created' => 'Account created! You can now log in.',
     'login_title' => 'Log in', 'no_account' => 'No account yet?', 'bad_login' => 'Incorrect e-mail or password.',
@@ -179,7 +182,7 @@ return [
     'admin_photo_help' => 'Photo (JPG, PNG or WebP, 3 MB max)', 'admin_publish' => 'Publish',
     'admin_cancel' => 'Cancel', 'admin_all_products' => 'All products (%d)', 'admin_visible' => 'Visible',
     'admin_yes' => 'Yes', 'admin_no' => 'No', 'admin_edit' => 'Edit', 'admin_hide' => 'Hide', 'admin_show' => 'Show',
-    'admin_user_required_fields' => 'A name, valid e-mail and password (8 characters minimum) are required.',
+    'admin_user_required_fields' => 'A name, valid e-mail and password (12 characters minimum) are required.',
     'admin_account_created' => 'Account created.', 'admin_role_updated' => 'Role updated.',
     'admin_account_status_updated' => 'Account status updated.',
     'admin_self_protected' => 'Your own role and account status are protected on this page.',
@@ -187,7 +190,7 @@ return [
     'admin_keep_one_active' => 'At least one active administrator must remain.',
     'admin_create_account_title' => 'Add a team member',
     'admin_team_access_help' => 'Customers create their own accounts. You can add several couriers and administrators; an administrator has access to the entire administration area.',
-    'admin_temp_password' => 'Temporary password (8 characters minimum)', 'admin_role' => 'Role',
+    'admin_temp_password' => 'Temporary password (12 characters minimum)', 'admin_role' => 'Role',
     'admin_create' => 'Create', 'admin_all_accounts' => 'All accounts (%d)', 'admin_active' => 'Active',
     'admin_you' => 'you', 'admin_disable' => 'Disable', 'admin_reactivate' => 'Reactivate',
     'role_utilisateur' => 'User', 'role_livreur' => 'Courier', 'role_admin' => 'Administrator',

@@ -17,6 +17,7 @@ CREATE TABLE users (
   mot_de_passe VARCHAR(255) NOT NULL,          -- haché avec password_hash()
   telephone VARCHAR(30),
   adresse VARCHAR(255),
+  session_version INT UNSIGNED NOT NULL DEFAULT 1,
   role ENUM('utilisateur','livreur','admin') NOT NULL DEFAULT 'utilisateur',
   actif TINYINT(1) NOT NULL DEFAULT 1,         -- 0 = compte désactivé par l'admin
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -117,3 +118,10 @@ CREATE TABLE password_resets (
   used TINYINT(1) NOT NULL DEFAULT 0,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS auth_throttles (
+    bucket CHAR(64) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY,
+    attempts INT UNSIGNED NOT NULL DEFAULT 0,
+    expires_at BIGINT UNSIGNED NOT NULL,
+    INDEX idx_auth_expiry (expires_at)
+) ENGINE=InnoDB;

@@ -12,17 +12,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $moi = user()['id'];
 
     if ($action === 'creer') {
-        $nom = trim($_POST['nom'] ?? ''); $email = trim($_POST['email'] ?? ''); $mdp = $_POST['mot_de_passe'] ?? '';
+        $nom = trim(champ_texte($_POST, 'nom')); $email = trim(champ_texte($_POST, 'email')); $mdp = champ_texte($_POST, 'mot_de_passe');
         $role = in_array($_POST['role'] ?? '', $rolesEquipe, true) ? $_POST['role'] : 'livreur';
         $existe = $pdo->prepare('SELECT 1 FROM users WHERE email = ?');
         $existe->execute([$email]);
-        if ($nom === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($mdp) < 8) {
+        if ($nom === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || !mot_de_passe_valide($mdp) || mb_strlen($nom) > 100 || mb_strlen($email) > 150 || mb_strlen(champ_texte($_POST, 'telephone')) > 30) {
             flash('error', t('admin_user_required_fields'));
         } elseif ($existe->fetch()) {
             flash('error', t('err_email_used'));
         } else {
             $pdo->prepare('INSERT INTO users (nom, email, mot_de_passe, telephone, role) VALUES (?,?,?,?,?)')
-                ->execute([$nom, $email, password_hash($mdp, PASSWORD_DEFAULT), trim($_POST['telephone'] ?? ''), $role]);
+                ->execute([$nom, $email, password_hash($mdp, PASSWORD_DEFAULT), trim(champ_texte($_POST, 'telephone')), $role]);
             flash('success', t('admin_account_created'));
         }
     } elseif ($action === 'role' || $action === 'actif') {
@@ -55,11 +55,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     if ($retireDernierAdmin) {
                         flash('error', t('admin_keep_one_active'));
                     } elseif ($action === 'role') {
-                        $pdo->prepare('UPDATE users SET role = ? WHERE id = ?')->execute([$nouveauRole, $id]);
+                        $pdo->prepare('UPDATE users SET role = ?, session_version = session_version + 1 WHERE id = ?')->execute([$nouveauRole, $id]);
                         flash('success', t('admin_role_updated'));
                     } else {
                         $nouvelEtat = (int)$cible['actif'] === 1 ? 0 : 1;
-                        $pdo->prepare('UPDATE users SET actif = ? WHERE id = ?')->execute([$nouvelEtat, $id]);
+                        $pdo->prepare('UPDATE users SET actif = ?, session_version = session_version + 1 WHERE id = ?')->execute([$nouvelEtat, $id]);
                         flash('success', t('admin_account_status_updated'));
                     }
                 }
@@ -106,7 +106,7 @@ require __DIR__ . '/../includes/header.php';
     <td>
       <?php if ($moiMeme): ?><?= t('role_' . $u['role']) ?> (<?= t('admin_you') ?>)<?php else: ?>
       <form method="post"><?= csrf_field() ?><input type="hidden" name="action" value="role"><input type="hidden" name="id" value="<?= (int)$u['id'] ?>">
-        <select name="role" onchange="this.form.submit()"><?php foreach ($roles as $r): ?><option value="<?= e($r) ?>" <?= $u['role'] === $r ? 'selected' : '' ?>><?= t('role_' . $r) ?></option><?php endforeach; ?></select></form>
+        <select name="role" data-submit-on-change><?php foreach ($roles as $r): ?><option value="<?= e($r) ?>" <?= $u['role'] === $r ? 'selected' : '' ?>><?= t('role_' . $r) ?></option><?php endforeach; ?></select></form>
       <?php endif; ?>
     </td>
     <td>

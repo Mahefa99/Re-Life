@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('[data-submit-on-change]').forEach((field) => {
+    field.addEventListener('change', () => field.form.requestSubmit());
+  });
   const toggle = document.querySelector('.menu-toggle');
   const panel = document.querySelector('.nav-panel');
 
