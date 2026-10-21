@@ -1,6 +1,6 @@
 # Cahier des exigences et traçabilité — ReWear
 
-Ce document formalise les deux listes manuscrites fournies pour le projet et les relie à l'application actuelle. L'évaluation correspond à l'état du code au 15 octobre 2026.
+Ce document formalise les deux listes manuscrites fournies pour le projet et les relie à l'application actuelle. L'évaluation correspond à l'état du code au 22 octobre 2026.
 
 ## Règles de lecture
 
@@ -13,7 +13,7 @@ Ce document formalise les deux listes manuscrites fournies pour le projet et les
 
 | ID | Exigence | Statut | Preuves dans le projet | Critère vérifiable |
 |---|---|---|---|---|
-| EF-01 | Inscription | **Couvert** | `register.php`, table `users` dans `database.sql` | Un visiteur peut créer un compte avec un nom, un e-mail unique et un mot de passe d'au moins 8 caractères. Le mot de passe enregistré est haché. |
+| EF-01 | Inscription | **Couvert** | `register.php`, table `users` dans `database.sql` | Un visiteur peut créer un compte avec un nom, un e-mail unique et un mot de passe d'au moins 12 caractères. Le mot de passe enregistré est haché. |
 | EF-02 | Connexion | **Couvert** | `login.php`, `includes/functions.php` | Un compte actif peut se connecter avec ses identifiants. La session est renouvelée et l'utilisateur est dirigé vers l'espace correspondant à son rôle. |
 | EF-03 | Déconnexion | **Couvert** | `logout.php`, `includes/header.php`, `mon-compte.php` | Une déconnexion envoyée en `POST` avec un jeton CSRF détruit la session d'authentification et conserve seulement la langue choisie. |
 | EF-04 | Gestion du profil | **Couvert** | `mon-compte.php`, `includes/lang/fr.php`, `includes/lang/en.php` | L'utilisateur peut modifier son nom, son e-mail, son téléphone et son adresse, puis changer son mot de passe après vérification du mot de passe actuel. |
@@ -27,7 +27,7 @@ Ce document formalise les deux listes manuscrites fournies pour le projet et les
 | EF-12 | Gestion des produits | **Couvert** | `admin/produits.php`, `update_v3_books.sql` | L'administrateur peut créer, modifier, masquer et remettre en ligne un produit. Le formulaire adapte ses champs aux vêtements et aux livres ; l'auteur est obligatoire pour un livre. |
 | EF-13 | Gestion des commandes | **Couvert** | `commande.php`, `admin/commandes.php`, tables `commandes` et `commande_lignes` | Une commande valide enregistre ses lignes et diminue le stock dans une transaction. L'administrateur suit son statut ; une annulation remet le stock une seule fois. |
 | EF-14 | Interface multilingue | **Couvert** | `includes/lang/fr.php`, `includes/lang/en.php`, `includes/functions.php`, `includes/header.php`, `admin/*.php`, `livreur/index.php` | Le visiteur, le client, l'administrateur et le livreur peuvent utiliser leurs parcours en français ou en anglais. |
-| EF-15 | Réinitialisation du mot de passe | **Partiel** | `mot-de-passe-oublie.php`, `reinitialiser.php`, table `password_resets` | Le lien possède un jeton aléatoire, haché en base, valable une heure et à usage unique. En local, il est affiché pour la démonstration ; en production, l'envoi d'e-mail dépend d'un service mail qui reste à configurer et tester. |
+| EF-15 | Réinitialisation du mot de passe | **Partiel** | `mot-de-passe-oublie.php`, `reinitialiser.php`, table `password_resets` | Le lien possède un jeton aléatoire, haché en base, valable une heure et à usage unique. Il n’est jamais affiché. Le jeton est consommé dans une transaction et les anciennes sessions sont révoquées. L’envoi d’e-mail dépend d’un service mail à configurer et tester. |
 
 ## Besoins métier complémentaires
 
@@ -56,7 +56,7 @@ Ces besoins précisent le périmètre ReWear et complètent les quinze exigences
 2. **Compte administrateur local de démonstration** : les identifiants documentés dans le `README.md` doivent être remplacés. Il faut créer un administrateur nominatif, changer le mot de passe, puis désactiver le compte fourni avec les données d'exemple.
 3. **Réinitialisation en production** : le code utilise l'envoi mail du serveur. Il faut configurer un service SMTP fiable, tester la délivrabilité et utiliser une URL HTTPS correcte.
 4. **Configuration de production** : utiliser `REWEAR_MODE_DEV=0`, des identifiants de base de données dédiés, HTTPS et des cookies de session sécurisés, protéger les sauvegardes et centraliser les journaux d'erreur.
-5. **Durcissement restant** : prévoir la limitation des tentatives de connexion et de réinitialisation, des en-têtes de sécurité adaptés et des tests automatisés de régression.
+5. **Exploitation** : maintenir PHP à jour, surveiller les erreurs et sauvegardes, configurer le transport mail et valider HTTPS sur le serveur cible. Les limites de tentatives, en-têtes de sécurité et tests de régression sont désormais implémentés ; voir `docs/SECURITE.md`.
 
 ## User Stories de référence
 
