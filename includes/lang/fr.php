@@ -51,7 +51,8 @@ return [
     'news' => 'Nouveautés', 'no_products' => 'Aucun produit pour le moment.',
 
     // Boutique / produit
-    'shop_title' => 'Boutique solidaire', 'shop_sub' => 'Des pièces de seconde main à prix très réduits.',
+    'shop_title' => 'Boutique solidaire', 'shop_sub' => 'Des vêtements et des livres de seconde main à prix très réduits.',
+    'shop_clothing' => 'Vêtements',
     'search' => 'Rechercher…', 'all_cats' => 'Toutes les catégories', 'filter' => 'Filtrer', 'none_found' => 'Aucun produit trouvé.',
     'cat_Homme' => 'Homme', 'cat_Femme' => 'Femme', 'cat_Enfant' => 'Enfant', 'cat_Chaussures' => 'Chaussures',
     'cat_Accessoires' => 'Accessoires', 'cat_Livres' => 'Livres',

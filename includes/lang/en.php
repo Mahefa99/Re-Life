@@ -48,7 +48,8 @@ return [
     'impact_del_p' => 'Our delivery staff pick up your donations and deliver your orders.',
     'news' => 'New arrivals', 'no_products' => 'No products yet.',
 
-    'shop_title' => 'Solidarity shop', 'shop_sub' => 'Second-hand pieces at very low prices.',
+    'shop_title' => 'Solidarity shop', 'shop_sub' => 'Second-hand clothes and books at very low prices.',
+    'shop_clothing' => 'Clothing',
     'search' => 'Search…', 'all_cats' => 'All categories', 'filter' => 'Filter', 'none_found' => 'No products found.',
     'cat_Homme' => 'Men', 'cat_Femme' => 'Women', 'cat_Enfant' => 'Kids', 'cat_Chaussures' => 'Shoes',
     'cat_Accessoires' => 'Accessories', 'cat_Livres' => 'Books',

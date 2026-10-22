@@ -20,6 +20,14 @@ $sql .= ' ORDER BY created_at DESC';
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $produits = $stmt->fetchAll();
+$rayons = [
+    'vetements' => ['titre' => t('shop_clothing'), 'classe' => 'clothing-section', 'produits' => []],
+    'livres' => ['titre' => t('secondhand_books'), 'classe' => 'books-section', 'produits' => []],
+];
+foreach ($produits as $produit) {
+    $rayon = $produit['categorie'] === 'Livres' ? 'livres' : 'vetements';
+    $rayons[$rayon]['produits'][] = $produit;
+}
 ?>
 <h1><?= t('shop_title') ?></h1>
 <p class="muted"><?= t('shop_sub') ?></p>
@@ -38,8 +46,14 @@ $produits = $stmt->fetchAll();
 <?php if (!$produits): ?>
   <p class="muted"><?= t('none_found') ?></p>
 <?php else: ?>
+<?php foreach ($rayons as $idRayon => $rayon): ?>
+<?php if (!$rayon['produits']) continue; ?>
+<section id="<?= e($idRayon) ?>" class="products-section <?= e($rayon['classe']) ?>" aria-labelledby="<?= e($idRayon) ?>-titre">
+  <div class="section-heading">
+    <h2 id="<?= e($idRayon) ?>-titre"><?= e($rayon['titre']) ?></h2>
+  </div>
 <div class="grille">
-  <?php foreach ($produits as $p): ?>
+  <?php foreach ($rayon['produits'] as $p): ?>
     <a class="carte <?= $p['categorie'] === 'Livres' ? 'carte-livre' : 'carte-vetement' ?>" href="produit.php?id=<?= (int)$p['id'] ?>">
       <div class="photo"><?php if ($p['image']): ?><img src="uploads/<?= e(basename($p['image'])) ?>" alt="<?= e($p['nom']) ?>"><?php else: ?><span class="product-art <?= e(classe_visuel_produit($p)) ?>" role="img" aria-label="<?= e($p['nom']) ?>"></span><?php endif; ?><span class="favorite-mark" aria-hidden="true"><?= rewear_icon('heart') ?></span></div>
       <div class="corps">
@@ -55,5 +69,7 @@ $produits = $stmt->fetchAll();
     </a>
   <?php endforeach; ?>
 </div>
+</section>
+<?php endforeach; ?>
 <?php endif; ?>
 <?php require __DIR__ . '/includes/footer.php'; ?>
