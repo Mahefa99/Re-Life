@@ -1,6 +1,7 @@
 <?php
 // Textes en français. Pour ajouter un texte : une nouvelle ligne ici ET la même clé dans en.php
 return [
+    'password_show' => 'Afficher', 'password_hide' => 'Masquer',
     'auth_rate_limited' => 'Trop de tentatives. Veuillez patienter avant de réessayer.',
     'auth_reconnect' => 'Vos informations de connexion ont changé. Veuillez vous reconnecter.',
     'auth_email_password' => 'Mot de passe actuel (obligatoire pour changer l’e-mail)',

@@ -20,7 +20,7 @@ $peutUtiliserServices = !$u || $u['role'] === 'utilisateur';
   <link rel="stylesheet" href="<?= $base ?>assets/style.css">
   <script src="<?= $base ?>assets/app.js" defer></script>
 </head>
-<body class="<?= e($bodyClass ?? '') ?>">
+<body class="<?= e($bodyClass ?? '') ?>" data-password-show="<?= e(t('password_show')) ?>" data-password-hide="<?= e(t('password_hide')) ?>">
 <a class="skip-link" href="#contenu-principal"><?= t('skip_content') ?></a>
 <header class="site-header">
   <div class="container nav">

@@ -1,4 +1,42 @@
 document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('input[type="password"]').forEach((field, index) => {
+    const showText = document.body.dataset.passwordShow;
+    const hideText = document.body.dataset.passwordHide;
+    if (!showText || !hideText) return;
+
+    if (!field.id) {
+      let id = `password-field-${index}`;
+      while (document.getElementById(id)) id += '-input';
+      field.id = id;
+    }
+    const previousLabel = field.previousElementSibling;
+    if (previousLabel?.tagName === 'LABEL' && !previousLabel.htmlFor) {
+      previousLabel.htmlFor = field.id;
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'password-field';
+    field.before(wrapper);
+    wrapper.append(field);
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'password-toggle';
+    button.setAttribute('aria-controls', field.id);
+    const label = field.labels?.[0]?.textContent.trim() || '';
+    const updateButton = () => {
+      const action = field.type === 'password' ? showText : hideText;
+      button.textContent = action;
+      button.setAttribute('aria-label', label ? `${action} : ${label}` : action);
+    };
+    button.addEventListener('click', () => {
+      field.type = field.type === 'password' ? 'text' : 'password';
+      updateButton();
+    });
+    updateButton();
+    wrapper.append(button);
+  });
+
   document.querySelectorAll('[data-submit-on-change]').forEach((field) => {
     field.addEventListener('change', () => field.form.requestSubmit());
   });
