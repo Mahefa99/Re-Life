@@ -1,6 +1,11 @@
 <?php
 // Textes en français. Pour ajouter un texte : une nouvelle ligne ici ET la même clé dans en.php
 return [
+    'admin_show_all' => 'Tout afficher',
+    'admin_user_delete_title' => 'Supprimer un compte',
+    'admin_user_delete_confirm' => 'Voulez-vous supprimer définitivement ce compte ? Cette action est irréversible et supprimera son accès au site.',
+    'admin_user_delete_history' => 'Ce compte est lié à des dons, commandes ou missions de livraison. Pour conserver leur historique, désactivez le compte au lieu de le supprimer.',
+    'admin_user_deleted' => 'Compte supprimé.',
     'password_show' => 'Afficher', 'password_hide' => 'Masquer',
     'auth_rate_limited' => 'Trop de tentatives. Veuillez patienter avant de réessayer.',
     'auth_reconnect' => 'Vos informations de connexion ont changé. Veuillez vous reconnecter.',
@@ -195,7 +200,7 @@ return [
     'admin_user_required_fields' => 'Nom, e-mail valide et mot de passe (12 caractères min.) requis.',
     'admin_account_created' => 'Compte créé.', 'admin_role_updated' => 'Rôle modifié.',
     'admin_account_status_updated' => 'Statut du compte modifié.',
-    'admin_self_protected' => "Votre propre rôle et votre propre statut sont protégés sur cette page.",
+    'admin_self_protected' => "Vous ne pouvez pas modifier votre propre rôle, désactiver ou supprimer votre propre compte sur cette page.",
     'admin_invalid_role' => 'Rôle invalide.', 'admin_account_not_found' => 'Compte introuvable.',
     'admin_keep_one_active' => 'Au moins un administrateur actif doit rester.',
     'admin_create_account_title' => "Ajouter un membre de l'équipe",

@@ -77,13 +77,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $livreurs = $pdo->query("SELECT id, nom FROM users WHERE role = 'livreur' AND actif = 1 ORDER BY nom")->fetchAll();
-$dons = $pdo->query('SELECT d.*, u.nom AS donateur, u.telephone, l.nom AS livreur_nom FROM dons d JOIN users u ON u.id = d.user_id LEFT JOIN users l ON l.id = d.livreur_id ORDER BY d.statut = \'recu\', d.created_at DESC')->fetchAll();
+$filtreStatut = in_array($_GET['statut'] ?? '', $statuts, true) ? $_GET['statut'] : '';
+$requeteDons = $pdo->prepare('SELECT d.*, u.nom AS donateur, u.telephone, l.nom AS livreur_nom FROM dons d JOIN users u ON u.id = d.user_id LEFT JOIN users l ON l.id = d.livreur_id'
+    . ($filtreStatut !== '' ? ' WHERE d.statut = ?' : '') . " ORDER BY d.statut = 'recu', d.created_at DESC");
+$requeteDons->execute($filtreStatut !== '' ? [$filtreStatut] : []);
+$dons = $requeteDons->fetchAll();
 
 $base = '../'; $titre = t('admin_donations'); $page = 'dons';
 require __DIR__ . '/../includes/header.php';
 ?>
 <h1><?= t('admin_donations') ?></h1>
 <?php require __DIR__ . '/_menu.php'; ?>
+<?php if ($filtreStatut !== ''): ?><p><?= e(libelle_statut($filtreStatut)) ?> · <a href="dons.php"><?= t('admin_show_all') ?></a></p><?php endif; ?>
 <?php if (!$dons): ?><p class="muted"><?= t('admin_no_donations') ?></p><?php else: ?>
 <div class="table-wrap"><table>
   <tr><th><?= t('th_date') ?></th><th><?= t('admin_th_donor') ?></th><th><?= t('admin_th_donation') ?></th><th><?= t('admin_th_collection') ?></th><th><?= t('admin_th_status_courier') ?></th></tr>

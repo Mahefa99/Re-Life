@@ -15,12 +15,19 @@ $stats = [
     'admin_stat_donations'      => compter($pdo, "SELECT COUNT(*) FROM dons WHERE statut = 'en_attente'"),
     'admin_stat_received_items' => compter($pdo, "SELECT COALESCE(SUM(quantite),0) FROM dons WHERE statut = 'recu'"),
 ];
+$liens = [
+    'admin_stat_users' => 'utilisateurs.php',
+    'admin_stat_products' => 'produits.php',
+    'admin_stat_orders' => 'commandes.php?filtre=a_traiter',
+    'admin_stat_donations' => 'dons.php?statut=en_attente',
+    'admin_stat_received_items' => 'dons.php?statut=recu',
+];
 ?>
 <h1><?= t('admin_title') ?></h1>
 <?php require __DIR__ . '/_menu.php'; ?>
 <div class="stats">
   <?php foreach ($stats as $label => $n): ?>
-    <div class="stat"><strong><?= $n ?></strong><span class="muted"><?= t($label) ?></span></div>
+    <a class="stat stat-link" href="<?= e($liens[$label]) ?>"><strong><?= $n ?></strong><span class="muted"><?= t($label) ?></span></a>
   <?php endforeach; ?>
 </div>
 <p><?= t('admin_intro') ?></p>
