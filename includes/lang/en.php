@@ -1,6 +1,7 @@
 <?php
 // English texts. Same keys as fr.php. A missing key falls back to French.
 return [
+    'password_show' => 'Show', 'password_hide' => 'Hide',
     'auth_rate_limited' => 'Too many attempts. Please wait before trying again.',
     'auth_reconnect' => 'Your sign-in details have changed. Please sign in again.',
     'auth_email_password' => 'Current password (required to change your email)',
