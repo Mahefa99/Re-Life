@@ -78,7 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $livreurs = $pdo->query("SELECT id, nom FROM users WHERE role = 'livreur' AND actif = 1 ORDER BY nom")->fetchAll();
-$commandes = $pdo->query('SELECT c.*, u.nom AS client, u.telephone, l.nom AS livreur_nom FROM commandes c JOIN users u ON u.id = c.user_id LEFT JOIN users l ON l.id = c.livreur_id ORDER BY c.created_at DESC')->fetchAll();
+$aTraiter = ($_GET['filtre'] ?? '') === 'a_traiter';
+$commandes = $pdo->query('SELECT c.*, u.nom AS client, u.telephone, l.nom AS livreur_nom FROM commandes c JOIN users u ON u.id = c.user_id LEFT JOIN users l ON l.id = c.livreur_id'
+    . ($aTraiter ? " WHERE c.statut IN ('en_attente', 'confirmee')" : '') . ' ORDER BY c.created_at DESC')->fetchAll();
 $detail = $pdo->prepare('SELECT p.nom, l.quantite FROM commande_lignes l JOIN produits p ON p.id = l.produit_id WHERE l.commande_id = ?');
 
 $base = '../'; $titre = t('admin_orders'); $page = 'commandes';
@@ -86,6 +88,7 @@ require __DIR__ . '/../includes/header.php';
 ?>
 <h1><?= t('admin_orders') ?></h1>
 <?php require __DIR__ . '/_menu.php'; ?>
+<?php if ($aTraiter): ?><p><?= t('admin_stat_orders') ?> · <a href="commandes.php"><?= t('admin_show_all') ?></a></p><?php endif; ?>
 <?php if (!$commandes): ?><p class="muted"><?= t('admin_no_orders') ?></p><?php else: ?>
 <div class="table-wrap"><table>
   <tr><th><?= t('th_no') ?></th><th><?= t('admin_th_client') ?></th><th><?= t('admin_th_items') ?></th><th><?= t('th_total') ?></th><th><?= t('admin_th_delivery') ?></th><th><?= t('admin_th_status_courier') ?></th></tr>

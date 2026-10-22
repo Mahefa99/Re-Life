@@ -1,6 +1,11 @@
 <?php
 // English texts. Same keys as fr.php. A missing key falls back to French.
 return [
+    'admin_show_all' => 'Show all',
+    'admin_user_delete_title' => 'Delete an account',
+    'admin_user_delete_confirm' => 'Permanently delete this account? This cannot be undone and will remove its access to the site.',
+    'admin_user_delete_history' => 'This account is linked to donations, orders or delivery assignments. To preserve their history, deactivate the account instead of deleting it.',
+    'admin_user_deleted' => 'Account deleted.',
     'password_show' => 'Show', 'password_hide' => 'Hide',
     'auth_rate_limited' => 'Too many attempts. Please wait before trying again.',
     'auth_reconnect' => 'Your sign-in details have changed. Please sign in again.',
@@ -187,7 +192,7 @@ return [
     'admin_user_required_fields' => 'A name, valid e-mail and password (12 characters minimum) are required.',
     'admin_account_created' => 'Account created.', 'admin_role_updated' => 'Role updated.',
     'admin_account_status_updated' => 'Account status updated.',
-    'admin_self_protected' => 'Your own role and account status are protected on this page.',
+    'admin_self_protected' => 'You cannot change your own role, deactivate or delete your own account on this page.',
     'admin_invalid_role' => 'Invalid role.', 'admin_account_not_found' => 'Account not found.',
     'admin_keep_one_active' => 'At least one active administrator must remain.',
     'admin_create_account_title' => 'Add a team member',
