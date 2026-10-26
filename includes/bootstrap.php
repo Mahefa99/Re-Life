@@ -6,16 +6,16 @@ function configuration(string $name, $default = null) {
     $value = getenv($name);
     return $value !== false ? $value : ($local[$name] ?? $default);
 }
-define('MODE_DEV', filter_var(configuration('REWEAR_MODE_DEV', false), FILTER_VALIDATE_BOOL));
-define('REQUIRE_HTTPS', filter_var(configuration('REWEAR_REQUIRE_HTTPS', false), FILTER_VALIDATE_BOOL));
-define('SESSION_IDLE_SECONDS', max(60, (int)configuration('REWEAR_SESSION_IDLE', 1800)));
-define('SESSION_MAX_SECONDS', max(300, (int)configuration('REWEAR_SESSION_MAX', 28800)));
-define('DB_HOST', configuration('REWEAR_DB_HOST', 'localhost'));
-define('DB_PORT', (int)configuration('REWEAR_DB_PORT', 3306));
-define('DB_NAME', configuration('REWEAR_DB_NAME', 'rewear'));
-define('DB_USER', configuration('REWEAR_DB_USER', 'root'));
-define('DB_PASS', configuration('REWEAR_DB_PASS', ''));
-define('SITE_URL', rtrim(configuration('REWEAR_SITE_URL', 'http://localhost/wear-share'), '/'));
+define('MODE_DEV', filter_var(configuration('RELIFE_MODE_DEV', false), FILTER_VALIDATE_BOOL));
+define('REQUIRE_HTTPS', filter_var(configuration('RELIFE_REQUIRE_HTTPS', false), FILTER_VALIDATE_BOOL));
+define('SESSION_IDLE_SECONDS', max(60, (int)configuration('RELIFE_SESSION_IDLE', 1800)));
+define('SESSION_MAX_SECONDS', max(300, (int)configuration('RELIFE_SESSION_MAX', 28800)));
+define('DB_HOST', configuration('RELIFE_DB_HOST', 'localhost'));
+define('DB_PORT', (int)configuration('RELIFE_DB_PORT', 3306));
+define('DB_NAME', configuration('RELIFE_DB_NAME', 'relife'));
+define('DB_USER', configuration('RELIFE_DB_USER', 'root'));
+define('DB_PASS', configuration('RELIFE_DB_PASS', ''));
+define('SITE_URL', rtrim(configuration('RELIFE_SITE_URL', 'http://localhost/Re-Life'), '/'));
 define('UPLOAD_DIR', __DIR__ . '/../uploads/');
 ini_set('display_errors', MODE_DEV ? '1' : '0');
 ini_set('log_errors', '1');
@@ -43,7 +43,7 @@ if (PHP_SAPI !== 'cli') {
 ini_set('session.use_strict_mode', '1');
 ini_set('session.use_only_cookies', '1');
 ini_set('session.use_trans_sid', '0');
-session_name('rewear_session');
+session_name('relife_session');
 $cookiePath = rtrim(parse_url(SITE_URL, PHP_URL_PATH) ?: '/', '/') . '/';
 session_set_cookie_params(['lifetime' => 0, 'httponly' => true,
     'secure' => $https || REQUIRE_HTTPS, 'samesite' => 'Lax', 'path' => $cookiePath]);

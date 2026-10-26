@@ -1,6 +1,6 @@
 -- Données de démonstration facultatives pour remplir les deux vitrines de l'accueil.
 -- Les clauses NOT EXISTS permettent de relancer ce script sans créer de doublons.
-USE rewear;
+USE relife;
 SET NAMES utf8mb4;
 
 INSERT INTO produits (nom, description, categorie, taille, etat, prix, stock)

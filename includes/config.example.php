@@ -1,14 +1,14 @@
 <?php
 // Copier en config.local.php ; les variables d'environnement ont priorité.
 return [
-    'REWEAR_MODE_DEV' => false,
-    'REWEAR_REQUIRE_HTTPS' => false, // true sur un serveur public HTTPS
-    'REWEAR_DB_HOST' => 'localhost',
-    'REWEAR_DB_PORT' => 3306,
-    'REWEAR_DB_NAME' => 'rewear',
-    'REWEAR_DB_USER' => 'rewear_app',
-    'REWEAR_DB_PASS' => '', // secret local, jamais dans Git
-    'REWEAR_SITE_URL' => 'http://localhost/wear-share',
-    'REWEAR_SESSION_IDLE' => 1800,
-    'REWEAR_SESSION_MAX' => 28800,
+    'RELIFE_MODE_DEV' => false,
+    'RELIFE_REQUIRE_HTTPS' => false, // true sur un serveur public HTTPS
+    'RELIFE_DB_HOST' => 'localhost',
+    'RELIFE_DB_PORT' => 3306,
+    'RELIFE_DB_NAME' => 'relife',
+    'RELIFE_DB_USER' => 'root',
+    'RELIFE_DB_PASS' => '', // secret local, jamais dans Git
+    'RELIFE_SITE_URL' => 'http://localhost/Re-Life',
+    'RELIFE_SESSION_IDLE' => 1800,
+    'RELIFE_SESSION_MAX' => 28800,
 ];

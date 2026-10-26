@@ -38,7 +38,7 @@ function e($texte) {
 }
 
 // Icônes vectorielles communes : leur dessin reste identique sur tous les appareils.
-function rewear_icon($nom, $classe = 'ui-icon') {
+function relife_icon($nom, $classe = 'ui-icon') {
     $icones = [
         'leaf' => '<path d="M20.7 3.3C13.5 3 7.2 5.6 4.7 10.2c-1.6 3-.8 5.8 1.2 7.1 2.2 1.5 5.4.6 7.4-1.7 2.2-2.5 2.6-6.2 7.4-12.3Z" fill="currentColor" stroke="none"/><path d="M3.2 21c2.9-5.2 6.6-8.8 11.8-11.8" fill="none"/>',
         'globe' => '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',

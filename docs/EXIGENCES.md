@@ -1,4 +1,4 @@
-# Cahier des exigences et traçabilité — ReWear
+# Cahier des exigences et traçabilité — Re-Life
 
 Ce document formalise les deux listes manuscrites fournies pour le projet et les relie à l'application actuelle. L'évaluation correspond à l'état du code au 22 octobre 2026.
 
@@ -31,7 +31,7 @@ Ce document formalise les deux listes manuscrites fournies pour le projet et les
 
 ## Besoins métier complémentaires
 
-Ces besoins précisent le périmètre ReWear et complètent les quinze exigences de la liste initiale.
+Ces besoins précisent le périmètre Re-Life et complètent les quinze exigences de la liste initiale.
 
 | ID | Besoin | Statut | Preuves | Critère vérifiable |
 |---|---|---|---|---|
@@ -55,7 +55,7 @@ Ces besoins précisent le périmètre ReWear et complètent les quinze exigences
 1. **Paiement en ligne simulé** : l'option existe pour la démonstration, mais aucune passerelle, donnée bancaire, confirmation serveur ou remboursement réel n'est implémenté.
 2. **Compte administrateur local de démonstration** : les identifiants documentés dans le `README.md` doivent être remplacés. Il faut créer un administrateur nominatif, changer le mot de passe, puis désactiver le compte fourni avec les données d'exemple.
 3. **Réinitialisation en production** : le code utilise l'envoi mail du serveur. Il faut configurer un service SMTP fiable, tester la délivrabilité et utiliser une URL HTTPS correcte.
-4. **Configuration de production** : utiliser `REWEAR_MODE_DEV=0`, des identifiants de base de données dédiés, HTTPS et des cookies de session sécurisés, protéger les sauvegardes et centraliser les journaux d'erreur.
+4. **Configuration de production** : utiliser `RELIFE_MODE_DEV=0`, des identifiants de base de données dédiés, HTTPS et des cookies de session sécurisés, protéger les sauvegardes et centraliser les journaux d'erreur.
 5. **Exploitation** : maintenir PHP à jour, surveiller les erreurs et sauvegardes, configurer le transport mail et valider HTTPS sur le serveur cible. Les limites de tentatives, en-têtes de sécurité et tests de régression sont désormais implémentés ; voir `docs/SECURITE.md`.
 
 ## User Stories de référence

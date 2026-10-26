@@ -2,7 +2,7 @@
 
 ## Besoin
 
-ReWear doit permettre de proposer des livres en plus des vêtements. Une fiche livre doit présenter les informations utiles à un acheteur sans afficher des attributs propres aux vêtements.
+Re-Life doit permettre de proposer des livres en plus des vêtements. Une fiche livre doit présenter les informations utiles à un acheteur sans afficher des attributs propres aux vêtements.
 
 ## User Story
 

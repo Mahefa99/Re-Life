@@ -2,13 +2,13 @@
 if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 // Tests HTTP sur une base jetable ; aucun compte réel n'est utilisé.
 $root = dirname(__DIR__);
-$host = getenv('REWEAR_DB_HOST') ?: '127.0.0.1';
-$port = getenv('REWEAR_DB_PORT') ?: '3306';
-$user = getenv('REWEAR_DB_USER') ?: 'root';
-$password = getenv('REWEAR_DB_PASS') ?: '';
+$host = getenv('RELIFE_DB_HOST') ?: '127.0.0.1';
+$port = getenv('RELIFE_DB_PORT') ?: '3306';
+$user = getenv('RELIFE_DB_USER') ?: 'root';
+$password = getenv('RELIFE_DB_PASS') ?: '';
 $pdo = new PDO("mysql:host=$host;port=$port;charset=utf8mb4", $user, $password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-$db = 'rewear_security_test_' . bin2hex(random_bytes(6));
-$dir = sys_get_temp_dir() . '/rewear-security-' . bin2hex(random_bytes(6));
+$db = 'relife_security_test_' . bin2hex(random_bytes(6));
+$dir = sys_get_temp_dir() . '/relife-security-' . bin2hex(random_bytes(6));
 mkdir($dir); mkdir($dir . '/sessions');
 $server = null; $cookies = []; $checks = 0; $createdImages = [];
 function check($ok, string $message): void {
@@ -53,9 +53,9 @@ function login(string $email, string $password): array {
 try {
     $pdo->exec("CREATE DATABASE `$db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
     $pdo->exec("USE `$db`");
-    $schema = preg_replace('/CREATE DATABASE IF NOT EXISTS rewear[^;]*;|USE rewear;/', '', file_get_contents($root . '/database.sql'));
+    $schema = preg_replace('/CREATE DATABASE IF NOT EXISTS relife[^;]*;|USE relife;/', '', file_get_contents($root . '/database.sql'));
     $pdo->exec($schema);
-    $migration = str_replace('USE rewear;', '', file_get_contents($root . '/update_v6_security.sql'));
+    $migration = str_replace('USE relife;', '', file_get_contents($root . '/update_v6_security.sql'));
     $pdo->exec($migration); $pdo->exec($migration);
     check(true, 'Migration de sécurité réexécutable');
     $secret = 'Phrase-test-' . bin2hex(random_bytes(10));
@@ -65,8 +65,8 @@ try {
     $socket = stream_socket_server('tcp://127.0.0.1:0', $errno, $error);
     $address = stream_socket_get_name($socket, false); fclose($socket); $baseUrl = 'http://' . $address;
     $env = getenv();
-    foreach (['HOST' => $host, 'PORT' => $port, 'NAME' => $db, 'USER' => $user, 'PASS' => $password] as $key => $value) $env['REWEAR_DB_' . $key] = $value;
-    $env['REWEAR_SITE_URL'] = $baseUrl; $env['REWEAR_MODE_DEV'] = '0'; $env['REWEAR_REQUIRE_HTTPS'] = '0';
+    foreach (['HOST' => $host, 'PORT' => $port, 'NAME' => $db, 'USER' => $user, 'PASS' => $password] as $key => $value) $env['RELIFE_DB_' . $key] = $value;
+    $env['RELIFE_SITE_URL'] = $baseUrl; $env['RELIFE_MODE_DEV'] = '0'; $env['RELIFE_REQUIRE_HTTPS'] = '0';
     $args = [PHP_BINARY];
     if (!extension_loaded('gd')) { $args[] = '-d'; $args[] = 'extension=gd'; }
     $args = array_merge($args, ['-d', 'session.save_path="' . str_replace(chr(92), '/', $dir) . '/sessions"', '-d', 'disable_functions=mail', '-S', $address, '-t', $root]);
@@ -79,7 +79,7 @@ try {
     // Vérifier le vrai bootstrap, avec 0 puis sans variable.
     foreach (['0', false] as $mode) {
         $probeEnv = $env;
-        if ($mode === false) unset($probeEnv['REWEAR_MODE_DEV']);
+        if ($mode === false) unset($probeEnv['RELIFE_MODE_DEV']);
         $probe = proc_open([PHP_BINARY, '-r', 'require "includes/bootstrap.php"; echo MODE_DEV ? "ON" : "OFF";'], [['pipe','r'], ['pipe','w'], ['pipe','w']], $probePipes, $root, $probeEnv);
         fclose($probePipes[0]); $output = stream_get_contents($probePipes[1]); fclose($probePipes[1]); fclose($probePipes[2]); proc_close($probe);
         check($output === 'OFF', 'Mode développement désactivé : ' . ($mode === false ? 'valeur absente' : '0'));
@@ -148,7 +148,7 @@ try {
     check(!str_contains($expiredBody,'name="mot_de_passe"'), 'Jeton expiré refusé');
     foreach (['auth_last_seen'=>1801,'auth_started'=>28801] as $field=>$age) {
         login('client@example.test',$finalSecret);
-        $sessionFile=$dir.'/sessions/sess_'.$cookies['rewear_session'];
+        $sessionFile=$dir.'/sessions/sess_'.$cookies['relife_session'];
         $session=file_get_contents($sessionFile);
         $session=preg_replace('/'. $field .'\|i:\d+;/', $field.'|i:'.(time()-$age).';', $session);
         file_put_contents($sessionFile,$session);
@@ -170,7 +170,7 @@ try {
     $deleteSession=login('delete@example.test',$secret);
     $clientCsrf=token('/mon-compte.php');
     check(request('/admin/utilisateurs.php',['csrf'=>$clientCsrf,'action'=>'supprimer','id'=>$uid])[0]===403,'Client interdit de supprimer un compte');
-    $adminSession=login('admin@rewear.mu',$secret);
+    $adminSession=login('admin@relife.mu',$secret);
     [, $confirmation]=request('/admin/utilisateurs.php?supprimer='.$deleteId);
     check(str_contains($confirmation,'Confirmer la suppression') && (int)$pdo->query("SELECT COUNT(*) FROM users WHERE id=$deleteId")->fetchColumn()===1,'Confirmation GET sans suppression du compte');
     $userCsrf=token('/admin/utilisateurs.php');

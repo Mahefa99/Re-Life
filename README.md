@@ -1,4 +1,4 @@
-# ReWear — plateforme de don et de réutilisation de vêtements
+# Re-Life — plateforme de don et de réutilisation de vêtements
 
 Site PHP / MySQL : on y donne des vêtements et des livres, et on y achète des pièces de seconde main à prix très réduits.
 
@@ -14,13 +14,13 @@ Un compte est **obligatoire** avant de soumettre un don ou d'acheter.
 
 ## Installation (XAMPP ou WAMP)
 
-1. Copier le dossier `wear-share` dans `htdocs` (XAMPP) ou `www` (WAMP).
+1. Copier le dossier `Re-Life` dans `htdocs` (XAMPP) ou `www` (WAMP).
 2. Démarrer Apache et MySQL.
 3. Ouvrir phpMyAdmin → **Importer** → choisir `database.sql`.
-4. Copier `includes/config.example.php` vers `includes/config.local.php` et renseigner la connexion MySQL locale. Les variables `REWEAR_*` sont prioritaires. Pour une installation existante, reporter les anciennes valeurs de `config.php` dans ce fichier local.
-5. Ouvrir `http://localhost/wear-share/`.
+4. Copier `includes/config.example.php` vers `includes/config.local.php` et renseigner la connexion MySQL locale (XAMPP standard : utilisateur `root`, mot de passe vide, base `relife`). Les variables `RELIFE_*` sont prioritaires. Pour une installation existante, reporter les anciennes valeurs de `config.php` dans ce fichier local.
+5. Ouvrir `http://localhost/Re-Life/`.
 
-**Compte administrateur par défaut :** `admin@rewear.mu` / `Admin123!` → à changer dès la première connexion
+**Compte administrateur par défaut :** `admin@relife.mu` / `Admin123!` → à changer dès la première connexion
 (pour l'instant : créer un nouvel admin dans *Administration → Gestion des comptes*, puis désactiver l'ancien).
 
 ## Nouveautés de la version 2
@@ -30,7 +30,7 @@ Un compte est **obligatoire** avant de soumettre un don ou d'acheter.
   Les espaces administrateur et livreur utilisent également ces traductions.
 - **Mot de passe oublié** : les liens sont envoyés uniquement par e-mail et ne sont jamais affichés, même en développement. Configurer le transport mail du serveur avant utilisation.
 - **Base déjà installée ?** Importer `update_v2.sql` une fois (ajoute la table `password_resets`).
-- Le mode développement est désactivé par défaut. `REWEAR_MODE_DEV=0` le désactive explicitement ; ne jamais utiliser `1` sur un serveur public.
+- Le mode développement est désactivé par défaut. `RELIFE_MODE_DEV=0` le désactive explicitement ; ne jamais utiliser `1` sur un serveur public.
 
 ## Design et prise en charge des livres
 
@@ -51,7 +51,7 @@ Un compte est **obligatoire** avant de soumettre un don ou d'acheter.
 ## Structure
 
 ```
-wear-share/
+Re-Life/
 ├── database.sql          schéma + données d'exemple
 ├── update_v3_books.sql   migration pour les informations bibliographiques
 ├── update_v4_donation_types.sql   migration pour distinguer les types de dons
@@ -80,8 +80,8 @@ La politique de sécurité et les étapes de déploiement sont décrites dans [d
 Exécuter `C:\xampp\php\php.exe tests/admin_products_crud.php` avec MySQL démarré.
 Ce test crée une base temporaire indépendante, exerce les parcours HTTP vêtements/livres
 (création, consultation, modification, visibilité, suppression, validation, accès et historique),
-puis supprime sa base et arrête son serveur. Il utilise les variables `REWEAR_DB_HOST`,
-`REWEAR_DB_PORT`, `REWEAR_DB_USER` et `REWEAR_DB_PASS` si elles sont définies.
+puis supprime sa base et arrête son serveur. Il utilise les variables `RELIFE_DB_HOST`,
+`RELIFE_DB_PORT`, `RELIFE_DB_USER` et `RELIFE_DB_PASS` si elles sont définies.
 Le compte MySQL de test doit pouvoir créer et supprimer cette base temporaire.
 
 ## Tests de sécurité
@@ -91,3 +91,9 @@ PHP doit disposer des extensions `pdo_mysql`, `mbstring`, `fileinfo`, `curl` et 
 
 ## Pistes pour la suite
 Vrai paiement en ligne, e-mails de confirmation, mot de passe oublié, page de statistiques d'impact (kg de vêtements sauvés), plusieurs photos par produit.
+
+## Identité Re-Life
+
+Le site est accessible à l’adresse `http://localhost/Re-Life/`. La base MySQL s’appelle `relife` et se gère dans phpMyAdmin. Les variables de configuration utilisent le préfixe `RELIFE_`. Le nom affiché reste **Re-Life** dans les deux langues.
+
+Importer `database.sql` uniquement pour une nouvelle installation ; pour une base contenant déjà des données, sauvegarder puis appliquer uniquement les migrations nécessaires.

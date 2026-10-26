@@ -2,7 +2,7 @@
 // header.php : en-tête commun. Variables optionnelles : $titre, $base, $bodyClass
 require_once __DIR__ . '/functions.php';
 $base  = $base  ?? '';
-$titre = $titre ?? 'ReWear';
+$titre = $titre ?? 'Re-Life';
 $u = user();
 $pageCourante = basename(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH));
 $estAccueil = $base === '' && in_array($pageCourante, ['', 'index.php'], true);
@@ -16,7 +16,7 @@ $peutUtiliserServices = !$u || $u['role'] === 'utilisateur';
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#173f30">
-  <title><?= e($titre) ?> · ReWear</title>
+  <title><?= e($titre) ?> · Re-Life</title>
   <link rel="stylesheet" href="<?= $base ?>assets/style.css">
   <script src="<?= $base ?>assets/app.js" defer></script>
 </head>
@@ -24,8 +24,8 @@ $peutUtiliserServices = !$u || $u['role'] === 'utilisateur';
 <a class="skip-link" href="#contenu-principal"><?= t('skip_content') ?></a>
 <header class="site-header">
   <div class="container nav">
-    <a class="logo" href="<?= $base ?>index.php" aria-label="ReWear — <?= t('home') ?>">
-      <?= rewear_icon('leaf', 'logo-leaf') ?><span class="logo-re">Re</span><strong>Wear</strong>
+    <a class="logo" href="<?= $base ?>index.php" aria-label="Re-Life — <?= t('home') ?>">
+      <?= relife_icon('leaf', 'logo-leaf') ?><span class="logo-re">Re</span><strong>-Life</strong>
     </a>
 
     <div class="nav-panel" id="site-menu">
@@ -42,12 +42,12 @@ $peutUtiliserServices = !$u || $u['role'] === 'utilisateur';
 
       <div class="nav-right">
         <a class="language-link" href="<?= e(url_langue(langue() === 'fr' ? 'en' : 'fr')) ?>" aria-label="<?= t('language') ?>">
-          <?= rewear_icon('globe') ?><span><?= strtoupper(langue()) ?></span><?= rewear_icon('chevron', 'chevron-icon') ?>
+          <?= relife_icon('globe') ?><span><?= strtoupper(langue()) ?></span><?= relife_icon('chevron', 'chevron-icon') ?>
         </a>
-        <a class="nav-account" href="<?= e($lienCompte) ?>"><?= rewear_icon('user') ?><span><?= t('account_title') ?></span></a>
+        <a class="nav-account" href="<?= e($lienCompte) ?>"><?= relife_icon('user') ?><span><?= t('account_title') ?></span></a>
         <?php if ($peutUtiliserServices): ?>
           <a class="nav-cart" href="<?= $base ?>panier.php" aria-label="<?= t('cart') ?>, <?= $comptePanier ?>">
-            <?= rewear_icon('cart') ?><span><?= t('cart') ?></span>
+            <?= relife_icon('cart') ?><span><?= t('cart') ?></span>
             <?php if ($comptePanier > 0): ?><b><?= $comptePanier ?></b><?php endif; ?>
           </a>
         <?php endif; ?>
@@ -60,7 +60,7 @@ $peutUtiliserServices = !$u || $u['role'] === 'utilisateur';
     <div class="nav-mobile-actions">
       <?php if ($peutUtiliserServices): ?>
         <a class="mobile-cart" href="<?= $base ?>panier.php" aria-label="<?= t('cart') ?>, <?= $comptePanier ?>">
-          <?= rewear_icon('cart') ?><?php if ($comptePanier > 0): ?><b><?= $comptePanier ?></b><?php endif; ?>
+          <?= relife_icon('cart') ?><?php if ($comptePanier > 0): ?><b><?= $comptePanier ?></b><?php endif; ?>
         </a>
       <?php endif; ?>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu">

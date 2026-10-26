@@ -1,6 +1,6 @@
--- À importer UNE SEULE FOIS si ta base "rewear" existe déjà (phpMyAdmin > rewear > Importer).
+-- À importer UNE SEULE FOIS si ta base "relife" existe déjà (phpMyAdmin > relife > Importer).
 -- Ajoute la table du "mot de passe oublié". Rien d'autre ne change dans la base.
-USE rewear;
+USE relife;
 CREATE TABLE IF NOT EXISTS password_resets (
   id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT NOT NULL,

@@ -1,6 +1,6 @@
--- ReWear v3 : informations spécifiques aux livres
+-- Re-Life v3 : informations spécifiques aux livres
 -- Ce script peut être importé sur une base existante.
-USE rewear;
+USE relife;
 SET NAMES utf8mb4;
 
 ALTER TABLE produits

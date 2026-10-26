@@ -1,6 +1,6 @@
--- ReWear v5 : autoriser un don unique contenant vêtements et livres
+-- Re-Life v5 : autoriser un don unique contenant vêtements et livres
 -- À importer après update_v4_donation_types.sql sur une base déjà installée.
-USE rewear;
+USE relife;
 SET NAMES utf8mb4;
 
 ALTER TABLE dons

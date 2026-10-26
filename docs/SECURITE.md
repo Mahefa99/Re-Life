@@ -1,4 +1,4 @@
-# Sécurité de ReWear
+# Sécurité de Re-Life
 
 État du 22 octobre 2026 — branche `security-hardening`.
 
@@ -14,14 +14,14 @@
 3. Activer les extensions PDO MySQL, mbstring, fileinfo et GD dans le PHP du serveur.
    cURL est nécessaire à la suite de tests. Après modification de php.ini, redémarrer
    Apache depuis XAMPP. Sans GD, les nouveaux envois d’images sont refusés.
-4. Sur le serveur public, configurer une URL HTTPS fixe dans `REWEAR_SITE_URL`,
-   `REWEAR_REQUIRE_HTTPS=1` et `REWEAR_MODE_DEV=0`. Le serveur doit signaler HTTPS
+4. Sur le serveur public, configurer une URL HTTPS fixe dans `RELIFE_SITE_URL`,
+   `RELIFE_REQUIRE_HTTPS=1` et `RELIFE_MODE_DEV=0`. Le serveur doit signaler HTTPS
    à PHP. Derrière un proxy, cette information doit venir d’un proxy de confiance,
    jamais d’un en-tête client non vérifié. HSTS est envoyé seulement en HTTPS forcé.
 5. Configurer et tester le transport utilisé par `mail()`. Aucun lien de récupération
    n’est affiché ou journalisé. Un échec d’envoi garde une réponse générique.
 6. Créer un administrateur nominatif et désactiver le compte de démonstration avant
-   ouverture au public. Utiliser un compte SQL dédié à `rewear` avec uniquement
+   ouverture au public. Utiliser un compte SQL dédié à `relife` avec uniquement
    SELECT, INSERT, UPDATE et DELETE pour l’application. Les migrations utilisent
    un compte distinct autorisé à modifier le schéma.
 
@@ -32,12 +32,12 @@ séparément et ne sont pas appliqués par un commit Git.
 
 ## Authentification et sessions
 
-- Cookies `rewear_session`, HttpOnly, SameSite=Lax, limités au chemin du site.
+- Cookies `relife_session`, HttpOnly, SameSite=Lax, limités au chemin du site.
   Secure est activé sur HTTPS ou lorsque HTTPS est requis.
 - Identifiant renouvelé à la connexion et lors de la déconnexion ; CSRF renouvelé
   à la connexion. Session strictement transmise par cookie.
 - Expiration côté serveur après 30 minutes d’inactivité et 8 heures au maximum.
-  Les paramètres `REWEAR_SESSION_IDLE` et `REWEAR_SESSION_MAX` sont en secondes.
+  Les paramètres `RELIFE_SESSION_IDLE` et `RELIFE_SESSION_MAX` sont en secondes.
 - Changement ou récupération du mot de passe : incrément de `session_version`.
   Toutes les anciennes sessions, y compris la session courante, doivent se reconnecter.
 - La désactivation, la réactivation ou le changement de rôle depuis l’administration

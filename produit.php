@@ -53,7 +53,7 @@ require __DIR__ . '/includes/header.php';
       <form class="purchase-form" method="post">
         <?= csrf_field() ?>
         <label><?= t('qty') ?> <input type="number" name="quantite" value="1" min="1" max="<?= (int)$p['stock'] ?>"></label>
-        <button class="btn" type="submit"><?= rewear_icon('cart') ?> <?= t('add_cart') ?></button>
+        <button class="btn" type="submit"><?= relife_icon('cart') ?> <?= t('add_cart') ?></button>
       </form>
       <?php if (!est_connecte()): ?><p class="muted"><?= t('need_account') ?></p><?php endif; ?>
     <?php elseif ($p['stock'] <= 0): ?>
