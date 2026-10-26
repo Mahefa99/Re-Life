@@ -1,6 +1,20 @@
 <?php
 // Textes en français. Pour ajouter un texte : une nouvelle ligne ici ET la même clé dans en.php
 return [
+    'operation_save' => 'Mettre à jour',
+    'operation_delete' => 'Supprimer',
+    'operation_delete_title' => 'Supprimer un don ou une commande',
+    'operation_delete_confirm' => 'Confirmer la suppression',
+    'operation_cancel' => 'Annuler',
+    'operation_back' => 'Retour à la liste',
+    'operation_missing' => 'Ce don ou cette commande est introuvable.',
+    'operation_in_progress' => 'La collecte ou la livraison est en cours. Terminez cette étape avant de supprimer cette fiche.',
+    'operation_deleted' => 'La fiche a été supprimée.',
+    'operation_delete_failed' => 'La suppression a échoué. Aucune modification enregistrée. Réessayez.',
+    'operation_delete_warning' => 'Cette suppression est définitive. La fiche disparaîtra aussi de l’historique du membre et des missions du livreur.',
+    'operation_stock_restore' => 'Les articles de cette commande seront remis en stock et ses lignes seront supprimées.',
+    'operation_stock_unchanged' => 'Le stock restera inchangé : cette commande est déjà livrée ou annulée. Ses lignes seront supprimées.',
+
     'admin_show_all' => 'Tout afficher',
     'admin_user_delete_title' => 'Supprimer un compte',
     'admin_user_delete_confirm' => 'Voulez-vous supprimer définitivement ce compte ? Cette action est irréversible et supprimera son accès au site.',
