@@ -36,7 +36,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: pdo_mysql, gd
+          extensions: pdo_mysql, gd, mbstring
 
       - name: Préparer la base de données de test
         run: |
@@ -72,6 +72,7 @@ jobs:
 
             it('TC-01 - affiche la page accueil', () => {
               cy.visit('/');
+
               cy.contains(/Re-Life/i).should('be.visible');
               cy.contains('a', /boutique/i).should('be.visible');
               cy.contains('a', /faire un don/i).should('be.visible');
@@ -95,13 +96,22 @@ jobs:
             it('TC-03 - inscrit un nouvel utilisateur', () => {
               cy.visit('/register.php');
 
-              cy.get('input[name="nom"]').type('Utilisateur Test Cypress');
-              cy.get('input[name="email"]').type(email);
-              cy.get('input[name="telephone"]').type('52525252');
-              cy.get('input[name="adresse"]').type('Adresse de test');
+              cy.get('input[name="nom"]')
+                .type('Utilisateur Test Cypress');
 
-              cy.get('input[name="mot_de_passe"]').type(motDePasse);
-              cy.get('input[name="mot_de_passe2"]').type(motDePasse);
+              cy.get('input[name="email"]').type(email);
+
+              cy.get('input[name="telephone"]')
+                .type('52525252');
+
+              cy.get('input[name="adresse"]')
+                .type('Adresse de test');
+
+              cy.get('input[name="mot_de_passe"]')
+                .type(motDePasse);
+
+              cy.get('input[name="mot_de_passe2"]')
+                .type(motDePasse);
 
               cy.get('form.form button[type="submit"]').click();
 
@@ -114,8 +124,11 @@ jobs:
               cy.get('input[name="nom"]').type('Utilisateur Test');
               cy.get('input[name="email"]').type(email);
 
-              cy.get('input[name="mot_de_passe"]').type(motDePasse);
-              cy.get('input[name="mot_de_passe2"]').type(motDePasse);
+              cy.get('input[name="mot_de_passe"]')
+                .type(motDePasse);
+
+              cy.get('input[name="mot_de_passe2"]')
+                .type(motDePasse);
 
               cy.get('form.form button[type="submit"]').click();
 
@@ -140,8 +153,12 @@ jobs:
               cy.get('input[name="types_don[]"][value="livres"]')
                 .check({ force: true });
 
-              cy.get('textarea[name="description"]').type(descriptionDon);
-              cy.get('input[name="quantite"]').clear().type('3');
+              cy.get('textarea[name="description"]')
+                .type(descriptionDon);
+
+              cy.get('input[name="quantite"]')
+                .clear()
+                .type('3');
 
               cy.get('input[name="adresse_collecte"]')
                 .clear()
@@ -149,7 +166,8 @@ jobs:
 
               cy.get('form.form button[type="submit"]').click();
 
-              cy.location('pathname').should('include', 'mon-compte.php');
+              cy.location('pathname')
+                .should('include', 'mon-compte.php');
 
               cy.get('section[aria-labelledby="dons-titre"]')
                 .should('contain', descriptionDon);
@@ -163,19 +181,6 @@ jobs:
               }).then((reponse) => {
                 expect([302, 303, 403]).to.include(reponse.status);
               });
-            });
-          });
-
-            it('TC-01 - affiche le nom Re-Life', () => {
-              cy.contains(/Re-Life/i).should('be.visible');
-            });
-
-            it('TC-02 - affiche le lien Boutique', () => {
-              cy.contains('a', /boutique/i).should('be.visible');
-            });
-
-            it('TC-03 - affiche le lien Faire un don', () => {
-              cy.contains('a', /faire un don/i).should('be.visible');
             });
           });
           EOF
