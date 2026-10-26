@@ -65,10 +65,106 @@ jobs:
           EOF
 
           cat > cypress/e2e/accueil.cy.js <<'EOF'
-          describe('Page accueil Re-Life', () => {
-            beforeEach(() => {
+          describe('Tests automatises Re-Life', () => {
+            const email = `test-${Date.now()}@example.com`;
+            const motDePasse = 'TestReLife2026!';
+            const descriptionDon = `Don test Cypress ${Date.now()}`;
+
+            it('TC-01 - affiche la page accueil', () => {
               cy.visit('/');
+              cy.contains(/Re-Life/i).should('be.visible');
+              cy.contains('a', /boutique/i).should('be.visible');
+              cy.contains('a', /faire un don/i).should('be.visible');
             });
+
+            it('TC-02 - refuse une connexion invalide', () => {
+              cy.visit('/login.php');
+
+              cy.get('input[name="email"]')
+                .type('compte-inexistant@example.com');
+
+              cy.get('input[name="mot_de_passe"]')
+                .type('MauvaisMotDePasse123!');
+
+              cy.get('form.form button[type="submit"]').click();
+
+              cy.get('.alert-error').should('be.visible');
+              cy.location('pathname').should('include', 'login.php');
+            });
+
+            it('TC-03 - inscrit un nouvel utilisateur', () => {
+              cy.visit('/register.php');
+
+              cy.get('input[name="nom"]').type('Utilisateur Test Cypress');
+              cy.get('input[name="email"]').type(email);
+              cy.get('input[name="telephone"]').type('52525252');
+              cy.get('input[name="adresse"]').type('Adresse de test');
+
+              cy.get('input[name="mot_de_passe"]').type(motDePasse);
+              cy.get('input[name="mot_de_passe2"]').type(motDePasse);
+
+              cy.get('form.form button[type="submit"]').click();
+
+              cy.location('pathname').should('include', 'login.php');
+            });
+
+            it('TC-04 - refuse une adresse deja utilisee', () => {
+              cy.visit('/register.php');
+
+              cy.get('input[name="nom"]').type('Utilisateur Test');
+              cy.get('input[name="email"]').type(email);
+
+              cy.get('input[name="mot_de_passe"]').type(motDePasse);
+              cy.get('input[name="mot_de_passe2"]').type(motDePasse);
+
+              cy.get('form.form button[type="submit"]').click();
+
+              cy.get('.alert-error').should('be.visible');
+              cy.location('pathname').should('include', 'register.php');
+            });
+
+            it('TC-05 - connecte l utilisateur et enregistre un don mixte', () => {
+              cy.visit('/login.php');
+
+              cy.get('input[name="email"]').type(email);
+              cy.get('input[name="mot_de_passe"]').type(motDePasse);
+              cy.get('form.form button[type="submit"]').click();
+
+              cy.location('pathname').should('not.include', 'login.php');
+
+              cy.visit('/don.php');
+
+              cy.get('input[name="types_don[]"][value="vetements"]')
+                .check({ force: true });
+
+              cy.get('input[name="types_don[]"][value="livres"]')
+                .check({ force: true });
+
+              cy.get('textarea[name="description"]').type(descriptionDon);
+              cy.get('input[name="quantite"]').clear().type('3');
+
+              cy.get('input[name="adresse_collecte"]')
+                .clear()
+                .type('Adresse de collecte pour le test');
+
+              cy.get('form.form button[type="submit"]').click();
+
+              cy.location('pathname').should('include', 'mon-compte.php');
+
+              cy.get('section[aria-labelledby="dons-titre"]')
+                .should('contain', descriptionDon);
+            });
+
+            it('TC-06 - refuse l administration a un visiteur', () => {
+              cy.request({
+                url: '/admin/index.php',
+                followRedirect: false,
+                failOnStatusCode: false,
+              }).then((reponse) => {
+                expect([302, 303, 403]).to.include(reponse.status);
+              });
+            });
+          });
 
             it('TC-01 - affiche le nom Re-Life', () => {
               cy.contains(/Re-Life/i).should('be.visible');
