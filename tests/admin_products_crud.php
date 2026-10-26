@@ -1,16 +1,16 @@
 <?php
 // Exécuter avec PHP en ligne de commande. Une base temporaire indépendante
-// est créée, testée via HTTP, puis supprimée, sans utiliser les données ReWear.
+// est créée, testée via HTTP, puis supprimée, sans utiliser les données Re-Life.
 if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 $root = dirname(__DIR__);
-$host = getenv('REWEAR_DB_HOST') ?: '127.0.0.1';
-$port = getenv('REWEAR_DB_PORT') ?: '3306';
-$user = getenv('REWEAR_DB_USER') ?: 'root';
-$password = getenv('REWEAR_DB_PASS') ?: '';
+$host = getenv('RELIFE_DB_HOST') ?: '127.0.0.1';
+$port = getenv('RELIFE_DB_PORT') ?: '3306';
+$user = getenv('RELIFE_DB_USER') ?: 'root';
+$password = getenv('RELIFE_DB_PASS') ?: '';
 $pdo = new PDO("mysql:host=$host;port=$port;charset=utf8mb4", $user, $password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-$db = 'rewear_crud_test_' . bin2hex(random_bytes(6));
+$db = 'relife_crud_test_' . bin2hex(random_bytes(6));
 $server = null; $cookies = []; $checks = 0;
-$log = tempnam(sys_get_temp_dir(), 'rewear-crud-');
+$log = tempnam(sys_get_temp_dir(), 'relife-crud-');
 function verifier($ok, $message) {
     global $checks;
     if (!$ok) throw new RuntimeException($message);
@@ -37,18 +37,18 @@ try {
     $pdo->exec("CREATE DATABASE `$db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
     $pdo->exec("USE `$db`");
     $schema = file_get_contents($root . '/database.sql');
-    $schema = preg_replace('/CREATE DATABASE IF NOT EXISTS rewear[^;]*;|USE rewear;/', '', $schema);
+    $schema = preg_replace('/CREATE DATABASE IF NOT EXISTS relife[^;]*;|USE relife;/', '', $schema);
     $pdo->exec($schema);
     $testPassword = bin2hex(random_bytes(16));
-    $pdo->prepare("UPDATE users SET mot_de_passe = ? WHERE email = 'admin@rewear.mu'")->execute([password_hash($testPassword, PASSWORD_DEFAULT)]);
+    $pdo->prepare("UPDATE users SET mot_de_passe = ? WHERE email = 'admin@relife.mu'")->execute([password_hash($testPassword, PASSWORD_DEFAULT)]);
     $socket = stream_socket_server('tcp://127.0.0.1:0', $errno, $error);
     if (!$socket) throw new RuntimeException($error);
     $address = stream_socket_get_name($socket, false); fclose($socket);
     $baseUrl = 'http://' . $address;
     $env = getenv();
-    $env['REWEAR_DB_HOST'] = $host; $env['REWEAR_DB_PORT'] = $port;
-    $env['REWEAR_DB_USER'] = $user; $env['REWEAR_DB_PASS'] = $password;
-    $env['REWEAR_DB_NAME'] = $db; $env['REWEAR_MODE_DEV'] = '0'; $env['REWEAR_SITE_URL'] = $baseUrl;
+    $env['RELIFE_DB_HOST'] = $host; $env['RELIFE_DB_PORT'] = $port;
+    $env['RELIFE_DB_USER'] = $user; $env['RELIFE_DB_PASS'] = $password;
+    $env['RELIFE_DB_NAME'] = $db; $env['RELIFE_MODE_DEV'] = '0'; $env['RELIFE_SITE_URL'] = $baseUrl;
     $server = proc_open([PHP_BINARY, '-S', $address, '-t', $root], [['pipe', 'r'], ['file', $log, 'a'], ['file', $log, 'a']], $pipes, $root, $env);
     if (!is_resource($server)) throw new RuntimeException('Serveur de test indisponible');
     fclose($pipes[0]);
@@ -60,7 +60,7 @@ try {
     verifier(requete('/admin/produits.php')[0] === 302, 'Accès anonyme refusé');
     [, $login] = requete('/login.php');
     preg_match('/name="csrf" value="([^"]+)"/', $login, $m); $csrf = $m[1];
-    verifier(requete('/login.php', ['csrf' => $csrf, 'email' => 'admin@rewear.mu', 'mot_de_passe' => $testPassword])[0] === 302, 'Connexion administrateur');
+    verifier(requete('/login.php', ['csrf' => $csrf, 'email' => 'admin@relife.mu', 'mot_de_passe' => $testPassword])[0] === 302, 'Connexion administrateur');
     [, $list] = requete('/admin/produits.php');
     preg_match('/name="csrf" value="([^"]+)"/', $list, $m); $csrf = $m[1];
     verifier(str_contains($list, 'Ajouter un vêtement') && str_contains($list, 'Ajouter un livre'), 'Deux boutons de création');

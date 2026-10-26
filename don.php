@@ -76,11 +76,11 @@ require __DIR__ . '/includes/header.php';
   <div class="donation-types">
     <label class="donation-choice">
       <input type="checkbox" name="types_don[]" value="vetements" <?= $donVetements ? 'checked' : '' ?>>
-      <span class="donation-choice-content"><?= rewear_icon('shirt') ?><span><strong><?= t('donation_clothes') ?></strong><small><?= t('donation_clothes_help') ?></small></span></span>
+      <span class="donation-choice-content"><?= relife_icon('shirt') ?><span><strong><?= t('donation_clothes') ?></strong><small><?= t('donation_clothes_help') ?></small></span></span>
     </label>
     <label class="donation-choice">
       <input type="checkbox" name="types_don[]" value="livres" <?= $donLivres ? 'checked' : '' ?>>
-      <span class="donation-choice-content"><?= rewear_icon('book') ?><span><strong><?= t('donation_books') ?></strong><small><?= t('donation_books_help') ?></small></span></span>
+      <span class="donation-choice-content"><?= relife_icon('book') ?><span><strong><?= t('donation_books') ?></strong><small><?= t('donation_books_help') ?></small></span></span>
     </label>
   </div>
   <p class="donation-type-error" data-donation-type-error role="alert" hidden><?= e(t('err_donation_type')) ?></p>

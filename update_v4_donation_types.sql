@@ -1,6 +1,6 @@
--- ReWear v4 : distinguer les dons de vêtements et les dons de livres
+-- Re-Life v4 : distinguer les dons de vêtements et les dons de livres
 -- À importer une seule fois sur une base existante.
-USE rewear;
+USE relife;
 SET NAMES utf8mb4;
 
 ALTER TABLE dons

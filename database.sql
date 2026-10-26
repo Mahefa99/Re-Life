@@ -1,9 +1,9 @@
 -- ============================================================
--- ReWear : base de données de la plateforme de don et réutilisation
+-- Re-Life : base de données de la plateforme de don et réutilisation
 -- Utilisation : importer ce fichier dans phpMyAdmin (onglet Importer)
 -- ============================================================
-CREATE DATABASE IF NOT EXISTS rewear CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE rewear;
+CREATE DATABASE IF NOT EXISTS relife CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE relife;
 SET NAMES utf8mb4;
 
 -- Utilisateurs : 3 rôles
@@ -85,9 +85,9 @@ CREATE TABLE commande_lignes (
   FOREIGN KEY (produit_id) REFERENCES produits(id)
 );
 
--- Compte admin par défaut : admin@rewear.mu / Admin123!  (à changer après la première connexion)
+-- Compte admin par défaut : admin@relife.mu / Admin123!  (à changer après la première connexion)
 INSERT INTO users (nom, email, mot_de_passe, role) VALUES
-('Administrateur', 'admin@rewear.mu', '$2y$10$vwIJLJDAcXtYqC/S9bv24uvbWHMrqLrJdyHDra6pHVKmX.FRpg7Ue', 'admin');
+('Administrateur', 'admin@relife.mu', '$2y$10$vwIJLJDAcXtYqC/S9bv24uvbWHMrqLrJdyHDra6pHVKmX.FRpg7Ue', 'admin');
 
 -- Quelques produits d'exemple
 INSERT INTO produits (nom, description, categorie, taille, etat, prix, stock) VALUES

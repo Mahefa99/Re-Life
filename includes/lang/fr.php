@@ -27,7 +27,7 @@ return [
 
     // Accueil
     'hero_title' => 'Donnez une seconde vie à vos vêtements', 'hero_title_top' => 'Donnez une seconde', 'hero_title_bottom' => 'vie à vos vêtements',
-    'hero_text' => "ReWear collecte les vêtements et les livres dont vous n'avez plus besoin, et les propose à très petit prix à celles et ceux qui en ont besoin. Rien n'est jeté, rien n'est brûlé.",
+    'hero_text' => "Re-Life collecte les vêtements et les livres dont vous n'avez plus besoin, et les propose à très petit prix à celles et ceux qui en ont besoin. Rien n'est jeté, rien n'est brûlé.",
     'hero_eyebrow' => 'Mode responsable, impact local',
     'hero_short' => "Des vêtements et des livres de qualité, une île plus solidaire et un avenir plus durable pour Maurice.",
     'hero_image_alt' => 'Des personnes transmettent un carton de vêtements et de livres de seconde main',
@@ -39,7 +39,7 @@ return [
     'impact_books' => 'livres disponibles', 'impact_island' => 'Une île plus solidaire', 'impact_island_note' => 'et plus durable',
     'impact_available' => 'articles disponibles', 'impact_orders' => 'commandes livrées',
     'simple_gesture' => 'Un geste simple', 'how_title' => 'Comment ça marche ?',
-    'how_subtitle' => 'Du placard à une nouvelle histoire, ReWear s’occupe de chaque étape.',
+    'how_subtitle' => 'Du placard à une nouvelle histoire, Re-Life s’occupe de chaque étape.',
     'step_donate_title' => 'Vous faites un don', 'step_donate_text' => 'Déposez vos vêtements ou vos livres en bon état dans nos points de collecte.',
     'step_sort_title' => 'Nous trions', 'step_sort_text' => 'Notre équipe vérifie et prépare chaque vêtement et chaque livre.',
     'step_reuse_title' => 'Ils trouvent une seconde vie', 'step_reuse_text' => 'Ils rejoignent la boutique ou soutiennent des projets solidaires à Maurice.',
@@ -100,7 +100,7 @@ return [
     'donate_ok' => 'Merci pour votre don ! Un livreur viendra le collecter.', 'only_users_donate' => 'Seuls les comptes utilisateurs peuvent faire un don.',
 
     // Mon compte
-    'account_title' => 'Mon compte', 'account_intro' => 'Gérez vos informations et retrouvez toute votre activité ReWear.',
+    'account_title' => 'Mon compte', 'account_intro' => 'Gérez vos informations et retrouvez toute votre activité Re-Life.',
     'personal_info' => 'Mes informations', 'personal_info_help' => 'Ces coordonnées servent à vos collectes et à vos livraisons.',
     'save_profile' => 'Enregistrer mes informations', 'profile_saved' => 'Vos informations ont été mises à jour.',
     'security' => 'Sécurité', 'security_help' => 'Utilisez un mot de passe unique d’au moins 12 caractères.',
@@ -129,7 +129,7 @@ return [
     'reset_title' => 'Nouveau mot de passe', 'new_pwd' => 'Nouveau mot de passe', 'confirm' => 'Confirmer', 'save' => 'Enregistrer',
     'link_invalid' => 'Ce lien est invalide ou a expiré.', 'retry' => 'Refaire une demande',
     'pwd_changed' => 'Mot de passe modifié. Vous pouvez vous connecter.',
-    'mail_subject' => 'Réinitialisation de votre mot de passe ReWear', 'mail_body' => "Cliquez sur ce lien (valable 1 heure) :\n%s",
+    'mail_subject' => 'Réinitialisation de votre mot de passe Re-Life', 'mail_body' => "Cliquez sur ce lien (valable 1 heure) :\n%s",
 
     // Product management
     'admin_add_product' => 'Ajouter un produit',

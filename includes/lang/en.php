@@ -25,7 +25,7 @@ return [
     'invalid_request' => 'Invalid request. Reload the page and try again.', 'save_error' => 'The changes could not be saved. Please try again.',
 
     'hero_title' => 'Give your clothes a second life', 'hero_title_top' => 'Give your clothes', 'hero_title_bottom' => 'a second life',
-    'hero_text' => "ReWear collects the clothes and books you no longer need and offers them at very low prices to those who need them. Nothing is thrown away, nothing is burned.",
+    'hero_text' => "Re-Life collects the clothes and books you no longer need and offers them at very low prices to those who need them. Nothing is thrown away, nothing is burned.",
     'hero_eyebrow' => 'Responsible fashion, local impact',
     'hero_short' => 'Quality clothes and books, a more caring island and a more sustainable future for Mauritius.',
     'hero_image_alt' => 'People passing on a box of second-hand clothes and books',
@@ -37,7 +37,7 @@ return [
     'impact_books' => 'books available', 'impact_island' => 'A more caring island', 'impact_island_note' => 'and a more sustainable one',
     'impact_available' => 'items available', 'impact_orders' => 'orders delivered',
     'simple_gesture' => 'One simple gesture', 'how_title' => 'How does it work?',
-    'how_subtitle' => 'From the wardrobe to a new story, ReWear takes care of every step.',
+    'how_subtitle' => 'From the wardrobe to a new story, Re-Life takes care of every step.',
     'step_donate_title' => 'You make a donation', 'step_donate_text' => 'Drop off clothes or books in good condition at our collection points.',
     'step_sort_title' => 'We sort', 'step_sort_text' => 'Our team checks and prepares every garment and every book.',
     'step_reuse_title' => 'They find a second life', 'step_reuse_text' => 'They join the shop or support community projects in Mauritius.',
@@ -94,7 +94,7 @@ return [
     'err_donation_desc_long' => 'The description cannot exceed 2,000 characters.',
     'donate_ok' => 'Thank you for your donation! A courier will come to collect it.', 'only_users_donate' => 'Only user accounts can donate.',
 
-    'account_title' => 'My account', 'account_intro' => 'Manage your information and find all your ReWear activity.',
+    'account_title' => 'My account', 'account_intro' => 'Manage your information and find all your Re-Life activity.',
     'personal_info' => 'My information', 'personal_info_help' => 'These details are used for collections and deliveries.',
     'save_profile' => 'Save my information', 'profile_saved' => 'Your information has been updated.',
     'security' => 'Security', 'security_help' => 'Use a unique password of at least 12 characters.',
@@ -121,7 +121,7 @@ return [
     'reset_title' => 'New password', 'new_pwd' => 'New password', 'confirm' => 'Confirm', 'save' => 'Save',
     'link_invalid' => 'This link is invalid or has expired.', 'retry' => 'Make a new request',
     'pwd_changed' => 'Password changed. You can now log in.',
-    'mail_subject' => 'Reset your ReWear password', 'mail_body' => "Click this link (valid for 1 hour):\n%s",
+    'mail_subject' => 'Reset your Re-Life password', 'mail_body' => "Click this link (valid for 1 hour):\n%s",
 
     // Product management
     'admin_add_product' => 'Add a product',

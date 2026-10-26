@@ -55,7 +55,7 @@ foreach ($produits as $produit) {
 <div class="grille">
   <?php foreach ($rayon['produits'] as $p): ?>
     <a class="carte <?= $p['categorie'] === 'Livres' ? 'carte-livre' : 'carte-vetement' ?>" href="produit.php?id=<?= (int)$p['id'] ?>">
-      <div class="photo"><?php if ($p['image']): ?><img src="uploads/<?= e(basename($p['image'])) ?>" alt="<?= e($p['nom']) ?>"><?php else: ?><span class="product-art <?= e(classe_visuel_produit($p)) ?>" role="img" aria-label="<?= e($p['nom']) ?>"></span><?php endif; ?><span class="favorite-mark" aria-hidden="true"><?= rewear_icon('heart') ?></span></div>
+      <div class="photo"><?php if ($p['image']): ?><img src="uploads/<?= e(basename($p['image'])) ?>" alt="<?= e($p['nom']) ?>"><?php else: ?><span class="product-art <?= e(classe_visuel_produit($p)) ?>" role="img" aria-label="<?= e($p['nom']) ?>"></span><?php endif; ?><span class="favorite-mark" aria-hidden="true"><?= relife_icon('heart') ?></span></div>
       <div class="corps">
         <h3><?= e($p['nom']) ?></h3>
         <?php if ($p['categorie'] === 'Livres'): ?>
@@ -64,7 +64,7 @@ foreach ($produits as $produit) {
         <?php else: ?>
           <p class="card-book-meta"><?= e(t('cat_' . $p['categorie'])) ?><?php if ($p['taille']): ?> · <?= t('size') ?> <?= e($p['taille']) ?><?php endif; ?></p>
         <?php endif; ?>
-        <div class="product-bottom"><span class="prix"><?= prix($p['prix']) ?></span><span class="reuse-mark" aria-hidden="true"><?= rewear_icon($p['categorie'] === 'Livres' ? 'book' : 'leaf') ?></span></div>
+        <div class="product-bottom"><span class="prix"><?= prix($p['prix']) ?></span><span class="reuse-mark" aria-hidden="true"><?= relife_icon($p['categorie'] === 'Livres' ? 'book' : 'leaf') ?></span></div>
       </div>
     </a>
   <?php endforeach; ?>

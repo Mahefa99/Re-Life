@@ -125,8 +125,8 @@ require __DIR__ . '/../includes/header.php';
 <h1><?= t('admin_products') ?></h1>
 <?php require __DIR__ . '/_menu.php'; ?>
 <div class="product-admin-actions">
-  <a class="btn" href="produits.php?ajouter=vetements"><?= rewear_icon('shirt') ?> <?= t('admin_add_clothing') ?></a>
-  <a class="btn btn-outline" href="produits.php?ajouter=livres"><?= rewear_icon('book') ?> <?= t('admin_add_book') ?></a>
+  <a class="btn" href="produits.php?ajouter=vetements"><?= relife_icon('shirt') ?> <?= t('admin_add_clothing') ?></a>
+  <a class="btn btn-outline" href="produits.php?ajouter=livres"><?= relife_icon('book') ?> <?= t('admin_add_book') ?></a>
   <?php if ($fiche || $afficherFormulaire): ?><a href="produits.php"><?= t('admin_back_products') ?></a><?php endif; ?>
 </div>
 <?php if ($erreurs): ?><div class="alert alert-error" role="alert"><ul><?php foreach ($erreurs as $erreur): ?><li><?= e(t($erreur)) ?></li><?php endforeach; ?></ul></div><?php endif; ?>

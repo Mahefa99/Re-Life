@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($uid) {
             $lien = SITE_URL . '/reinitialiser.php?token=' . $token;
             // Aucun lien affiché ni journalisé, y compris en développement.
-            if (!function_exists('mail') || !@mail($email, t('mail_subject'), t('mail_body', $lien))) error_log('ReWear: envoi de récupération indisponible.');
+            if (!function_exists('mail') || !@mail($email, t('mail_subject'), t('mail_body', $lien))) error_log('Re-Life: envoi de récupération indisponible.');
         }
     }
     $envoye = true;
