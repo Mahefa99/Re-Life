@@ -109,9 +109,10 @@ require __DIR__ . '/../includes/header.php';
         <select name="statut"><?php foreach ($transitions[$c['statut']] ?? [$c['statut']] as $s): ?><option value="<?= $s ?>" <?= $c['statut'] === $s ? 'selected' : '' ?>><?= e(libelle_statut($s)) ?></option><?php endforeach; ?></select>
         <select name="livreur_id"><option value="">— <?= t('admin_courier') ?> —</option>
           <?php foreach ($livreurs as $l): ?><option value="<?= (int)$l['id'] ?>" <?= (int)$c['livreur_id'] === (int)$l['id'] ? 'selected' : '' ?>><?= e($l['nom']) ?></option><?php endforeach; ?></select>
-        <button class="btn btn-small" type="submit"><?= t('ok') ?></button>
+        <button class="btn btn-small" type="submit"><?= t('operation_save') ?></button>
       </form>
       <?php endif; ?>
+      <p><a class="btn btn-outline btn-small" href="supprimer-operation.php?type=commandes&amp;id=<?= (int)$c['id'] ?>"><?= e(t('operation_delete')) ?></a></p>
     </td>
   </tr>
   <?php endforeach; ?>

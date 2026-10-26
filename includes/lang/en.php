@@ -1,6 +1,20 @@
 <?php
 // English texts. Same keys as fr.php. A missing key falls back to French.
 return [
+    'operation_save' => 'Update',
+    'operation_delete' => 'Delete',
+    'operation_delete_title' => 'Delete a donation or order',
+    'operation_delete_confirm' => 'Confirm deletion',
+    'operation_cancel' => 'Cancel',
+    'operation_back' => 'Back to list',
+    'operation_missing' => 'This donation or order could not be found.',
+    'operation_in_progress' => 'Collection or delivery is in progress. Complete this step before deleting this record.',
+    'operation_deleted' => 'The record has been deleted.',
+    'operation_delete_failed' => 'Deletion failed. No changes were saved. Try again.',
+    'operation_delete_warning' => 'Deletion is permanent. The record will also disappear from the member history and courier tasks.',
+    'operation_stock_restore' => 'The items will be returned to stock and the order lines will be deleted.',
+    'operation_stock_unchanged' => 'Stock will remain unchanged: this order is already delivered or cancelled. Its lines will be deleted.',
+
     'admin_show_all' => 'Show all',
     'admin_user_delete_title' => 'Delete an account',
     'admin_user_delete_confirm' => 'Permanently delete this account? This cannot be undone and will remove its access to the site.',
