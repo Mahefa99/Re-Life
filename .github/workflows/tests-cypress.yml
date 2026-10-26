@@ -1,0 +1,121 @@
+name: Tests Cypress Re-Life
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  tests-cypress:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: test_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -ptest_password"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Récupérer le projet
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Installer PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_mysql, gd
+
+      - name: Préparer la base de données de test
+        run: |
+          mysql -h 127.0.0.1 -u root -ptest_password < database.sql
+          mysql -h 127.0.0.1 -u root -ptest_password relife < update_v6_security.sql
+
+      - name: Préparer Cypress
+        run: |
+          if [ ! -f package.json ]; then
+            npm init -y
+          fi
+
+          npm install --no-save cypress
+
+          mkdir -p cypress/e2e rapports-cypress
+
+          cat > cypress.config.cjs <<'EOF'
+          const { defineConfig } = require('cypress');
+
+          module.exports = defineConfig({
+            e2e: {
+              baseUrl: 'http://127.0.0.1:8000',
+              supportFile: false,
+            },
+          });
+          EOF
+
+          cat > cypress/e2e/accueil.cy.js <<'EOF'
+          describe('Page accueil Re-Life', () => {
+            beforeEach(() => {
+              cy.visit('/');
+            });
+
+            it('TC-01 - affiche le nom Re-Life', () => {
+              cy.contains(/Re-Life/i).should('be.visible');
+            });
+
+            it('TC-02 - affiche le lien Boutique', () => {
+              cy.contains('a', /boutique/i).should('be.visible');
+            });
+
+            it('TC-03 - affiche le lien Faire un don', () => {
+              cy.contains('a', /faire un don/i).should('be.visible');
+            });
+          });
+          EOF
+
+      - name: Démarrer le site et lancer les tests
+        env:
+          RELIFE_DB_HOST: 127.0.0.1
+          RELIFE_DB_PORT: 3306
+          RELIFE_DB_NAME: relife
+          RELIFE_DB_USER: root
+          RELIFE_DB_PASS: test_password
+          RELIFE_SITE_URL: http://127.0.0.1:8000
+          RELIFE_MODE_DEV: '0'
+          RELIFE_REQUIRE_HTTPS: '0'
+        run: |
+          php -S 127.0.0.1:8000 > rapports-cypress/serveur.log 2>&1 &
+
+          for i in {1..30}; do
+            if curl -s http://127.0.0.1:8000/ > /dev/null; then
+              break
+            fi
+            sleep 1
+          done
+
+          npx cypress run \
+            --config-file cypress.config.cjs \
+            --spec cypress/e2e/accueil.cy.js \
+            --reporter junit \
+            --reporter-options "mochaFile=rapports-cypress/resultats.xml,toConsole=true"
+
+      - name: Sauvegarder le rapport et les captures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapport-tests-cypress
+          path: |
+            rapports-cypress/
+            cypress/screenshots/
+          if-no-files-found: warn
